@@ -1,13 +1,19 @@
-upper_confidence_bound <- function(k, alpha=1) {
+thompson_sampling <- function(k, alpha = 1, beta = 1) {
   force(alpha)
+  force(beta)
   force(k)
   Mu <- matrix(Inf, nrow = 1, ncol = k)
   Nu <- matrix(0, nrow = 1, ncol = k)
   t <- 1
 
   whatnext <- function() {
-    indices <- mapply(ucb, Mu, Nu, MoreArgs = list(alpha, t))
-    list(which=which.max(indices), proba=max(indices))
+    if (t <= k) {
+      list(which=t, proba=Inf)
+    }
+    else {
+      indices <- mapply(ts, Mu, Nu, MoreArgs = list(alpha, beta))
+      list(which=which.max(indices), proba=max(indices))
+    }
   }
 
   nowwhat <- function(arm, reward) {
@@ -25,14 +31,6 @@ upper_confidence_bound <- function(k, alpha=1) {
 }
 
 
-ucb <- function(mu, nu, alpha, t) {
-  if (nu == 0) {
-    Inf
-  }
-  else {
-    mu + alpha * sqrt((2 * log(t)) / nu)
-  }
+ts <- function(mu, nu, alpha, beta) {
+  rbeta(1, alpha + mu*nu, beta + nu - mu*nu)
 }
-
-
-
