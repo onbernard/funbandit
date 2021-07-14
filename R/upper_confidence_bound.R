@@ -5,12 +5,12 @@ upper_confidence_bound <- function(k, alpha=1) {
   Nu <- matrix(0, nrow = 1, ncol = k)
   t <- 1
 
-  whatnext <- function() {
+  choose <- function() {
     indices <- mapply(ucb, Mu, Nu, MoreArgs = list(alpha, t))
-    list(which=which.max(indices), proba=max(indices))
+    list(which=which.max(indices), maxucb=max(indices))
   }
 
-  nowwhat <- function(arm, reward) {
+  receive <- function(arm, reward) {
     if (Nu[arm] == 0) {
       Mu[arm] <<- reward
     }
@@ -21,7 +21,7 @@ upper_confidence_bound <- function(k, alpha=1) {
     t <<- t+1
   }
 
-  list(whatnext=whatnext, nowwhat=nowwhat)
+  list(choose=choose, receive=receive)
 }
 
 
@@ -33,6 +33,3 @@ ucb <- function(mu, nu, alpha, t) {
     mu + alpha * sqrt((2 * log(t)) / nu)
   }
 }
-
-
-

@@ -5,9 +5,9 @@ epsilon_greedy <- function(k, epsilon = 0.25) {
   Nu <- matrix(0, nrow = 1, ncol = k)
   t <- 1
 
-  whatnext <- function() {
+  choose <- function() {
     if (t <= k) {
-      list(which = t, proba = Inf, reason="explore")
+      list(which = t, why="explore")
     }
     else {
       whatdo <- exploit_or_not(epsilon)
@@ -16,11 +16,11 @@ epsilon_greedy <- function(k, epsilon = 0.25) {
         "exploit" = which.max(Mu),
         "explore" = sample(1:k, size = 1, replace = TRUE)
       )
-      list(which = which, proba = Mu[which], reason=whatdo)
+      list(which = which, why=whatdo)
     }
   }
 
-  nowwhat <- function(arm, reward) {
+  receive <- function(arm, reward) {
     if (Nu[arm] == 0) {
       Mu[arm] <<- reward
     }
@@ -31,7 +31,7 @@ epsilon_greedy <- function(k, epsilon = 0.25) {
     t <<- t + 1
   }
 
-  list(whatnext = whatnext, nowwhat = nowwhat)
+  list(choose=choose, receive=receive)
 }
 
 exploit_or_not <- function(epsilon) {

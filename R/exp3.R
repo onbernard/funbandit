@@ -8,17 +8,17 @@ exp3 <- function(k, gamma = 0.05) {
   estimated_reward <- Inf
   t <- 1
 
-  whatnext <- function() {
+  choose <- function() {
     if (t <= k) {
-      list(which=t, proba=estimated_reward)
+      list(which=t, estimated_reward=estimated_reward)
     }
     else {
       which <- sample(1:k, size=1, replace=TRUE, prob = prob)
-      list(which=which, proba=estimated_reward)
+      list(which=which, estimated_reward=estimated_reward)
     }
   }
 
-  nowwhat <- function(arm, reward) {
+  receive <- function(arm, reward) {
     last_reward <<- reward
     prob <<- mapply(expp, weights, MoreArgs = list(sum(weights), k, gamma))
     estimated_reward <<- last_reward/prob[arm]
@@ -26,18 +26,9 @@ exp3 <- function(k, gamma = 0.05) {
     t <<- t + 1
   }
 
-  list(whatnext=whatnext, nowwhat=nowwhat)
+  list(choose=choose, receive=receive)
 }
 
-distr <- function(weights, gamma) {
-  k <- length(weights)
-  prob <- rep(0, k)
-  sumweights <- sum(weights)
-  for (a in 1:k) {
-    prob[a] <- (1-gamma) * (weights[a]/sumweights) + (gamma/k)
-  }
-  prob
-}
 
 expp <- function(w, sum, k, gamma) {
   (1-gamma) * (w/sum) + (gamma/k)

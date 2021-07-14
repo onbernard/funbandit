@@ -6,17 +6,17 @@ thompson_sampling <- function(k, alpha = 1, beta = 1) {
   Nu <- matrix(0, nrow = 1, ncol = k)
   t <- 1
 
-  whatnext <- function() {
+  choose <- function() {
     if (t <= k) {
-      list(which=t, proba=Inf)
+      list(which=t, tsample=Inf)
     }
     else {
       indices <- mapply(ts, Mu, Nu, MoreArgs = list(alpha, beta))
-      list(which=which.max(indices), proba=max(indices))
+      list(which=which.max(indices), tsample=max(indices))
     }
   }
 
-  nowwhat <- function(arm, reward) {
+  receive <- function(arm, reward) {
     if (Nu[arm] == 0) {
       Mu[arm] <<- reward
     }
@@ -27,7 +27,7 @@ thompson_sampling <- function(k, alpha = 1, beta = 1) {
     t <<- t+1
   }
 
-  list(whatnext=whatnext, nowwhat=nowwhat)
+  list(choose=choose, receive=receive)
 }
 
 
