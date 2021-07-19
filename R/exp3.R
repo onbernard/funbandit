@@ -10,11 +10,11 @@ exp3 <- function(k, gamma = 0.05) {
 
   choose <- function() {
     if (t <= k) {
-      list(which=t, estimated_reward=estimated_reward)
+      tibble(which=t, estimated_reward=estimated_reward)
     }
     else {
       which <- sample(1:k, size=1, replace=TRUE, prob = prob)
-      list(which=which, estimated_reward=estimated_reward)
+      tibble(which=which, estimated_reward=estimated_reward)
     }
   }
 

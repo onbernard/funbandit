@@ -1,13 +1,20 @@
 upper_confidence_bound <- function(k, alpha=1) {
-  force(alpha)
   force(k)
+  force(alpha)
+  stopifnot(is.double(alpha))
+  stopifnot(is.integer(k))
   Mu <- matrix(Inf, nrow = 1, ncol = k)
   Nu <- matrix(0, nrow = 1, ncol = k)
   t <- 1
 
   choose <- function() {
     indices <- mapply(ucb, Mu, Nu, MoreArgs = list(alpha, t))
-    list(which=which.max(indices), maxucb=max(indices))
+    which <- which.max(indices)
+    maxucb <- max(indices)
+    if (maxucb == Inf) {
+      maxucb <- NA
+    }
+    tibble(which=which, maxucb=maxucb)
   }
 
   receive <- function(arm, reward) {

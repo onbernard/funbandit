@@ -5,7 +5,7 @@ cyclical <- function(k) {
   which <- 1
 
   whatnext <- function() {
-    list(which=which, proba=Mu[which])
+    tibble(which=which, proba=Mu[which])
   }
 
   nowwhat <- function(arm, reward) {

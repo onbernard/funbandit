@@ -8,11 +8,11 @@ thompson_sampling <- function(k, alpha = 1, beta = 1) {
 
   choose <- function() {
     if (t <= k) {
-      list(which=t, tsample=Inf)
+      tibble(which=t, tsample=Inf)
     }
     else {
-      indices <- mapply(ts, Mu, Nu, MoreArgs = list(alpha, beta))
-      list(which=which.max(indices), tsample=max(indices))
+      indices <- mapply(ts, Mu, Nu, alpha, beta)
+      tibble(which=which.max(indices), tsample=max(indices))
     }
   }
 
@@ -32,5 +32,6 @@ thompson_sampling <- function(k, alpha = 1, beta = 1) {
 
 
 ts <- function(mu, nu, alpha, beta) {
-  rbeta(1, alpha + mu*nu, beta + nu - mu*nu)
+  out <- rbeta(1, alpha + mu*nu, beta + nu - mu*nu)
+  out
 }

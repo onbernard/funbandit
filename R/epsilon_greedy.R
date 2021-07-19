@@ -7,7 +7,7 @@ epsilon_greedy <- function(k, epsilon = 0.25) {
 
   choose <- function() {
     if (t <= k) {
-      list(which = t, why="explore")
+      tibble(which = t, why="explore")
     }
     else {
       whatdo <- exploit_or_not(epsilon)
@@ -16,7 +16,7 @@ epsilon_greedy <- function(k, epsilon = 0.25) {
         "exploit" = which.max(Mu),
         "explore" = sample(1:k, size = 1, replace = TRUE)
       )
-      list(which = which, why=whatdo)
+      tibble(which=which, why=whatdo)
     }
   }
 

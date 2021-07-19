@@ -27,3 +27,15 @@ test_linucb <- function() {
   }
   choices
 }
+
+gen_data <- function(n) {
+  outp <- matrix(NA, ncol=5, nrow=n)
+  for(a in 1:5) {
+    outp[,a] <- rbinom(n, 1, runif(1))
+  }
+  outp
+}
+
+test_compx <- function(n) {
+  system.time({invisible(apply_policy(upper_confidence_bound, gen_data(n)))})["elapsed"]
+}

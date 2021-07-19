@@ -17,7 +17,7 @@ linear_upper_confidence_bound <- function(k, dim, alpha = 1) {
       x %*% ctxt
     })
     p <- alpha * a_upper_ci + a_mean
-    list(which = which.max(p), maxucb = max(p))
+    tibble(which = which.max(p), maxucb = max(p))
   }
 
   receive <- function(arm, reward, ctxt) {
