@@ -5,9 +5,9 @@ epsilon_greedy <- function(k, epsilon = 0.25) {
   Nu <- matrix(0, nrow = 1, ncol = k)
   t <- 1
 
-  choose <- function() {
+  choose <- structure(function() {
     if (t <= k) {
-      tibble(which = t, why="explore")
+      data.frame(which = t, why="explore", stringsAsFactors = FALSE)
     }
     else {
       whatdo <- exploit_or_not(epsilon)
@@ -16,11 +16,11 @@ epsilon_greedy <- function(k, epsilon = 0.25) {
         "exploit" = which.max(Mu),
         "explore" = sample(1:k, size = 1, replace = TRUE)
       )
-      tibble(which=which, why=whatdo)
+      data.frame(which=which, why=whatdo, stringsAsFactors = FALSE)
     }
-  }
+  }, class="agent.choose")
 
-  receive <- function(arm, reward) {
+  receive <- structure(function(arm, reward) {
     if (Nu[arm] == 0) {
       Mu[arm] <<- reward
     }
@@ -29,9 +29,9 @@ epsilon_greedy <- function(k, epsilon = 0.25) {
     }
     Nu[arm] <<- Nu[arm] + 1
     t <<- t + 1
-  }
+  }, class="agent.receive")
 
-  list(choose=choose, receive=receive)
+  structure(list(choose=choose, receive=receive), class="agent")
 }
 
 exploit_or_not <- function(epsilon) {

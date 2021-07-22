@@ -7,17 +7,17 @@ upper_confidence_bound <- function(k, alpha=1) {
   Nu <- matrix(0, nrow = 1, ncol = k)
   t <- 1
 
-  choose <- function() {
+  choose <- structure(function() {
     indices <- mapply(ucb, Mu, Nu, MoreArgs = list(alpha, t))
     which <- which.max(indices)
     maxucb <- max(indices)
     if (maxucb == Inf) {
       maxucb <- NA
     }
-    tibble(which=which, maxucb=maxucb)
-  }
+    data.frame(which=which, maxucb=maxucb, stringsAsFactors = FALSE)
+  }, class="agent.choose")
 
-  receive <- function(arm, reward) {
+  receive <- structure(function(arm, reward) {
     if (Nu[arm] == 0) {
       Mu[arm] <<- reward
     }
@@ -26,9 +26,9 @@ upper_confidence_bound <- function(k, alpha=1) {
     }
     Nu[arm] <<- Nu[arm] + 1
     t <<- t+1
-  }
+  }, class="agent.receive")
 
-  list(choose=choose, receive=receive)
+  structure(list(choose=choose, receive=receive), class="agent")
 }
 
 
