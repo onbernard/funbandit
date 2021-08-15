@@ -1,4 +1,5 @@
-linear_upper_confidence_bound <- structure(function(k, dim, alpha = 1) {
+# TODO
+linear_contextual <- function(k, dim, indices, alpha = 1) {
   k <- as.integer(k)
   alpha <- as.double(alpha)
   dim <- as.integer(dim)
@@ -10,13 +11,7 @@ linear_upper_confidence_bound <- structure(function(k, dim, alpha = 1) {
   A_inv <- array(diag(dim), c(dim, dim, k))
 
   choose <- structure(function(ctxt) {
-    a_upper_ci <- apply(A_inv, 3, function(x) {
-      t(ctxt) %*% x %*% ctxt
-    }) %>% sqrt
-    a_mean <- apply(th_hat, 1, function(x) {
-      x %*% ctxt
-    })
-    p <- alpha * a_upper_ci + a_mean
+    p <- indices(A, A_inv, b, th_hat, ctxt)
     data.frame(which = which.max(p), maxucb = max(p))
   }, class="contextual_agent.choose")
 
@@ -28,4 +23,5 @@ linear_upper_confidence_bound <- structure(function(k, dim, alpha = 1) {
   }, class="contextual_agent.receive")
 
   structure(list(choose=choose, receive=receive), k=k, class="contextual_agent")
-}, class=c("ctxt_policy", "policy"))
+}
+

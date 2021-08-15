@@ -1,7 +1,18 @@
-thompson_sampling <- function(k, alpha = 1, beta = 1) {
-  force(alpha)
-  force(beta)
-  force(k)
+#' Thompson Sampling Policy
+#'
+#' @param k number of arms
+#' @param alpha first beta distribution parameter
+#' @param beta second beta distribution parameter
+#'
+#' @return An agent object, i.e. a list of two functions : choose and receive
+#' @export
+#'
+#' @examples
+thompson_sampling <- structure(function(k, alpha = 1, beta = 1) {
+  alpha <- as.integer(alpha)
+  beta <- as.integer(beta)
+  k <- as.integer(k)
+
   Mu <- matrix(Inf, nrow = 1, ncol = k)
   Nu <- matrix(0, nrow = 1, ncol = k)
   t <- 1
@@ -27,10 +38,21 @@ thompson_sampling <- function(k, alpha = 1, beta = 1) {
     t <<- t+1
   }, class="agent.receive")
 
-  structure(list(choose=choose, receive=receive), class="agent")
-}
+  structure(list(choose=choose, receive=receive), k=k, class="agent")
+}, class="policy")
 
 
+#' Thompson sample value of an arm
+#'
+#' @param mu observed mean
+#' @param nu number of trials
+#' @param alpha first beta distribution parameter
+#' @param beta second beta distribution parameter
+#'
+#' @return double value
+#' @export
+#'
+#' @examples
 ts <- function(mu, nu, alpha, beta) {
   out <- rbeta(1, alpha + mu*nu, beta + nu - mu*nu)
   out

@@ -1,8 +1,16 @@
-upper_confidence_bound <- function(k, alpha=1) {
-  force(k)
-  force(alpha)
-  stopifnot(is.double(alpha))
-  stopifnot(is.integer(k))
+#' Upper Confidence Bound Policy
+#'
+#' @param k number of arms
+#' @param alpha exploration parameter
+#'
+#' @return An agent object, i.e. a list of two functions : choose and receive
+#' @export
+#'
+#' @examples
+upper_confidence_bound <- structure(function(k, alpha=1) {
+  alpha <- as.double(alpha)
+  k <- as.integer(k)
+
   Mu <- matrix(Inf, nrow = 1, ncol = k)
   Nu <- matrix(0, nrow = 1, ncol = k)
   t <- 1
@@ -28,10 +36,21 @@ upper_confidence_bound <- function(k, alpha=1) {
     t <<- t+1
   }, class="agent.receive")
 
-  structure(list(choose=choose, receive=receive), class="agent")
-}
+  structure(list(choose=choose, receive=receive), k=k, class="agent")
+}, class="policy")
 
 
+#' Upper Confidence Bound value of an arm
+#'
+#' @param mu observed mean
+#' @param nu number of trials
+#' @param alpha exploration parameter
+#' @param t iteration index
+#'
+#' @return double value
+#' @export
+#'
+#' @examples
 ucb <- function(mu, nu, alpha, t) {
   if (nu == 0) {
     Inf

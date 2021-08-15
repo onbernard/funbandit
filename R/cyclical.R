@@ -1,5 +1,6 @@
-cyclical <- function(k) {
-  force(k)
+cyclical <- structure(function(k) {
+  k <- as.integer(k)
+
   Mu <- matrix(Inf, nrow = 1, ncol = k)
   Nu <- matrix(0, nrow = 1, ncol = k)
   which <- 1
@@ -19,5 +20,5 @@ cyclical <- function(k) {
     which <<- which%%k + 1
   }, class="agent.receive")
 
-  structure(list(whatnext=whatnext, nowwhat=nowwhat), class="agent")
-}
+  structure(list(whatnext=whatnext, nowwhat=nowwhat), k=k, class="agent")
+}, class="policy")

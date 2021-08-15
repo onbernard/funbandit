@@ -1,5 +1,14 @@
-from_distribution <- function(k, prob) {
-  force(k)
+#' Fixed arm pull probabilities Policy
+#'
+#' @param k number of arms
+#' @param prob pull probability of each arm
+#'
+#' @return An agent object, i.e. a list of two functions : choose and receive
+#' @export
+#'
+#' @examples
+from_distribution <- structure(function(k, prob) {
+  k <- as.integer(k)
   force(prob)
 
   choose <- structure(function() {
@@ -9,5 +18,5 @@ from_distribution <- function(k, prob) {
 
   receive <- structure(function(arm, reward) {}, class="agent.receive")
 
-  structure(list(choose=choose, receive=receive), class="agent")
-}
+  structure(list(choose=choose, receive=receive), k=k, class="agent")
+}, class="policy")

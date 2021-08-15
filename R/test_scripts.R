@@ -3,44 +3,43 @@ library(tidyverse)
 library(sloop)
 library(ggpubr)
 library(microbenchmark)
+library(ggplot2)
 
-
-plotTimings <- function(timings) {
-  df <- cbind(sapply(timings,nrow), do.call(rbind,timings))
-
-  df$expr <- reorder(df$expr,-df$time,FUN=max)
-  ggplot(data=df,aes(x=nRow,y=time,color=expr)) +
-    geom_point(alpha=0.8) + geom_smooth(alpha=0.8)
-  nmax <- max(df$nRow)
-  tsub <- df[df$nRow==nmax,]
-  tsub$expr <- reorder(tsub$expr,tsub$time,FUN=median)
-  plt <- list(
-    ggplot(data=df,aes(x=nRow,y=time,color=expr)) +
-      geom_point(alpha=0.8) + geom_smooth(alpha=0.8),
-    ggplot(data=df,aes(x=nRow,y=time,color=expr)) +
-      geom_point(alpha=0.8) + geom_smooth(alpha=0.8) +
-      scale_y_log10(),
-    WVPlots::ScatterBoxPlot(tsub,'expr','time',
-                            title=paste('nRow = ',nmax)) +
-      coord_flip()
-  )
-  do.call(ggarrange, plt)
+gen_rewardmat <- function(h, k, prob=runif(1)) {
+  mat <- matrix(NA, ncol=k, nrow=h)
+  for(a in 1:k) {
+    mat[,a] <- rbinom(h, 1, prob)
+  }
+  mat
 }
 
+test_con <- function() {
+  size.tot = 1000                        # this makes the example exactly reproducible
+  x1 = runif(size.tot, min=0, max=10)          # you have 4, largely uncorrelated predictors
+  x2 = runif(size.tot, min=0, max=10)
+  x3 = runif(size.tot, min=0, max=10)
+  x4 = runif(size.tot, min=0, max=10)
+  dt = cbind(x1,x2,x3,x4)
+  #arm reward
+  arm_1 <-  as.vector(c(-1,9,-8,4))
+  K1 = crossprod(t(dt),arm_1)
+  arm_2 <-  as.vector(c(-1,2,1,0))
+  K2 = crossprod(t(dt),arm_2)
+  arm_3 <-  as.vector(c(-1,-5,1,10))
+  K3 = crossprod(t(dt),arm_3)
+  visitor_reward <-  cbind(K1,K2,K3)
 
-timings <- function(FUN, timeSeq) {
-  outp <- vector("list", length(timeSeq))
-  for(i in seq_len(length(timeSeq))) {
-    nRow <- timeSeq[[i]]
-    ti <- microbenchmark(FUN(i),
-                         times=10)
-    ti <- data.frame(ti, stringsAsFactors = FALSE)
-    ti$nRow <- nRow
-    ti$nCol <- 5
-    outp[[i]] <- ti
-  }
-  outp <- data.table::rbindlist(outp)
-  outp$expr <- deparse1(substitute(FUN))
-  outp
+  linucb <- linear_upper_confidence_bound(3, 4)
+  lints  <- linear_thompson_sampling(3,4)
+  policies <- list(linucb, lints)
+
+  lapply(policies, function(pol){
+    choices <- rep.int(0,1000)
+    for(i in 1:1000) {
+      choices[i] <- pol$choose(dt[i,])$which
+      pol$receive(choices[i], visitor_reward[i, choices[i]], dt[i,])
+    }
+    choices
+  })
 }
 

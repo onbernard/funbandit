@@ -1,6 +1,7 @@
-epsilon_greedy <- function(k, epsilon = 0.25) {
-  force(epsilon)
-  force(k)
+epsilon_greedy <- structure(function(k, epsilon = 0.25) {
+  epsilon <- as.double(epsilon)
+  k <- as.integer(k)
+
   Mu <- matrix(Inf, nrow = 1, ncol = k)
   Nu <- matrix(0, nrow = 1, ncol = k)
   t <- 1
@@ -31,8 +32,8 @@ epsilon_greedy <- function(k, epsilon = 0.25) {
     t <<- t + 1
   }, class="agent.receive")
 
-  structure(list(choose=choose, receive=receive), class="agent")
-}
+  structure(list(choose=choose, receive=receive), k=k, class="agent")
+}, class="policy")
 
 exploit_or_not <- function(epsilon) {
   sample(

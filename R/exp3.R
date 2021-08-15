@@ -1,6 +1,15 @@
-exp3 <- function(k, gamma = 0.05) {
-  force(k)
-  force(gamma)
+#'  Exponential-weight algorithm for Exploration and Exploitation Policy
+#'
+#' @param k number of arms
+#' @param gamma exploration parameter
+#'
+#' @return An agent object, i.e. a list of two functions : choose and receive
+#' @export
+#'
+#' @examples
+exp3 <- structure(function(k, gamma = 0.05) {
+  k <- as.integer(k)
+  gamma <- as.double(gamma)
 
   weights <- rep(1, times=k)
   prob <- rep(0, k)
@@ -26,10 +35,21 @@ exp3 <- function(k, gamma = 0.05) {
     t <<- t + 1
   }, class="agent.receive")
 
-  structure(list(choose=choose, receive=receive), class="agent")
-}
+  structure(list(choose=choose, receive=receive), k=k, class="agent")
+}, class="policy")
 
 
+#' EXP3 expectation estimation of an arm
+#'
+#' @param w arm's weight
+#' @param sum sum of all arm weights
+#' @param k number of arms
+#' @param gamma exploration parameter
+#'
+#' @return
+#' @export
+#'
+#' @examples
 expp <- function(w, sum, k, gamma) {
   (1-gamma) * (w/sum) + (gamma/k)
 }
