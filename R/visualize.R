@@ -48,14 +48,14 @@ timings <- function(FUN, timeSeq) {
 # results <- list(ucb=ucb,ts=ts,epsg=epsg)
 # compare_results(results)
 compare_results <- function(results) {
-  df <-
-    cbind(agent = rep(names(results), sapply(results, nrow)), do.call(bind_rows, results))
+  df <- do.call(bind_rows, results)
+    #cbind(ww = rep(names(results), sapply(results, nrow)), do.call(bind_rows, results))
   regretplt <-
-    ggplot(data = df, aes(x = t, y = cum_regret, color = agent)) + geom_line()
+    ggplot(data = df, aes(x = t, y = cum_regret, color = policy)) + geom_line()
   choicehistplt <-
-    ggplot(df, aes(x = which, group = agent, fill = agent)) + geom_histogram(position =
+    ggplot(df, aes(x = which, group = policy, fill = policy)) + geom_histogram(position =
                                                                                "dodge", binwidth = 0.25) + theme_bw()
-  ggarrange(regretplt, choicehistplt)
+  ggpubr::ggarrange(regretplt, choicehistplt)
 }
 
 
