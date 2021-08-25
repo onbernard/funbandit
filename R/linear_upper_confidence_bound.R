@@ -3,6 +3,7 @@ linear_upper_confidence_bound <- structure(function(k, dim, alpha = 1) {
   alpha <- as.double(alpha)
   dim <- as.integer(dim)
 
+
   b <- matrix(0, k, dim)
   A <- array(diag(dim), c(dim, dim, k))
 
