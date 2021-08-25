@@ -38,7 +38,7 @@ thompson_sampling <- structure(function(k, alpha = 1, beta = 1) {
     t <<- t+1
   }, class="agent.receive")
 
-  structure(list(choose=choose, receive=receive), k=k, class="agent")
+  structure(list(choose=choose, receive=receive), k=k, name="ts", class="agent")
 }, class="policy")
 
 

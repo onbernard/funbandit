@@ -20,5 +20,5 @@ cyclical <- structure(function(k) {
     which <<- which%%k + 1
   }, class="agent.receive")
 
-  structure(list(whatnext=whatnext, nowwhat=nowwhat), k=k, class="agent")
+  structure(list(whatnext=whatnext, nowwhat=nowwhat), k=k, name="cyclical", class="agent")
 }, class="policy")

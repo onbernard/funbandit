@@ -18,5 +18,5 @@ from_distribution <- structure(function(k, prob) {
 
   receive <- structure(function(arm, reward) {}, class="agent.receive")
 
-  structure(list(choose=choose, receive=receive), k=k, class="agent")
+  structure(list(choose=choose, receive=receive), k=k, name="fromdistr", class="agent")
 }, class="policy")

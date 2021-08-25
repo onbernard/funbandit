@@ -5,20 +5,19 @@ library(ggpubr)
 library(microbenchmark)
 library(ggplot2)
 
-gen_rewardmat <- function(h, k, prob=runif(1)) {
+gen_rewardmat <- function(h, k, prob=runif(k)) {
   mat <- matrix(NA, ncol=k, nrow=h)
   for(a in 1:k) {
-    mat[,a] <- rbinom(h, 1, prob)
+    mat[,a] <- rbinom(h, 1, prob[a])
   }
   mat
 }
 
-test_ctxt <- function(X) {
-  size.tot <- 1000                        # this makes the example exactly reproducible
-  x1 <- runif(size.tot, min=0, max=10)          # you have 4, largely uncorrelated predictors
-  x2 <- runif(size.tot, min=0, max=10)
-  x3 <- runif(size.tot, min=0, max=10)
-  x4 <- runif(size.tot, min=0, max=10)
+test_contextual <- function(h=1000) {
+  x1 <- runif(h, min=0, max=10)
+  x2 <- runif(h, min=0, max=10)
+  x3 <- runif(h, min=0, max=10)
+  x4 <- runif(h, min=0, max=10)
   context_data <- cbind(x1,x2,x3,x4)
   #arm reward
   arm_1 <-  as.vector(c(-1,9,-8,4))
@@ -29,14 +28,26 @@ test_ctxt <- function(X) {
   K3 <- crossprod(t(context_data),arm_3)
   reward_data <-  cbind(K1,K2,K3)
 
+  X <- list(
+            kernel_upper_confidence_bound = stat_policy(krr_upper_confidence_bound)
+        )
 
-  lapply(X, function(pol){
+  r <- lapply(X, function(pol){
     pol(reward_data, context_data)
   })
+  compare_results(r)
 }
 
-test_normal <- function(X) {
-  size.tot <- 1000
-  reward_data <- gen_rewardmat(size.tot, 3)
-  lapply(X, function(pol){pol(reward_data)})
+test_normal <- function(h=100, k=3) {
+  reward_data <- gen_rewardmat(h, k)
+  X <-
+    list(
+      upper_confidence_bound = stat_policy(upper_confidence_bound),
+      thompson_sampling = stat_policy(thompson_sampling),
+      exp3 = stat_policy(exp3),
+      epsilon_greedy = stat_policy(epsilon_greedy),
+      kullback_leibler_upper_confidence_bound = stat_policy(kullback_leibler_upper_confidence_bound)
+    )
+  r  <- lapply(X, function(pol){pol(reward_data)})
+  compare_results(r)
 }

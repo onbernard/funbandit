@@ -36,7 +36,7 @@ upper_confidence_bound <- structure(function(k, alpha=1) {
     t <<- t+1
   }, class="agent.receive")
 
-  structure(list(choose=choose, receive=receive), k=k, class="agent")
+  structure(list(choose=choose, receive=receive), k=k, name=paste(c("ucb(alpha=",alpha, ")"), collapse=""), class="agent")
 }, class="policy")
 
 

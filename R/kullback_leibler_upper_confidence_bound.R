@@ -1,11 +1,11 @@
 
-kullback_leibler_upper_confidence_bound <- structure(function(k) {
+kullback_leibler_upper_confidence_bound <- structure(function(k, c=0) {
   k <- as.integer(k)
+  c <- as.double(c)
 
   Mu <- matrix(Inf, nrow = 1, ncol = k)
   Nu <- matrix(0, nrow = 1, ncol = k)
   t <- 1
-  c <- 0
   precision <- 1e-6
 
   choose <- structure(function() {
@@ -14,22 +14,20 @@ kullback_leibler_upper_confidence_bound <- structure(function(k) {
 
     }
     else{
-      t2 <- sum(Nu)
-      d <- (log(t2)+c*(log(log(t2))))/Nu
-      upperbound <- min(1, kl_ucb_gaussian(Mu,  d))
-      lowerbound <- Mu
-      count_iteration <- 0
-      kl_vec <- Vectorize(kl_bernoulli)
-      m <- c()
-      while (count_iteration < 50 && upperbound-lowerbound > precision) {
-        m <- (lowerbound+upperbound)/2
-        upperbound <- ifelse(kl_vec(Mu, m)>d, m, upperbound)
-        lowerbound <- ifelse(kl_vec(Mu, m)<=d, m, lowerbound)
-        count_iteration <- count_iteration + 1
-      }
-      m <- (lowerbound+upperbound)/2
+      D <- (log(t)+c*(log(log(t))))/Nu
+      upperbounds <- min(1, kl_ucb_gaussian(Mu, D))
+      lowerbounds <- Mu
 
-      data.frame(which=which.max(m), stringsAsFactors = FALSE)
+      indices <-
+        root_search(
+          lowerbound = lowerbounds,
+          upperbound = upperbounds,
+          center = D,
+          f = Vectorize(kl_bernoulli),
+          fargs = list(Mu)
+        )
+
+      data.frame(which=which.max(indices), stringsAsFactors = FALSE)
     }
   }, class="agent.choose")
 
@@ -44,8 +42,20 @@ kullback_leibler_upper_confidence_bound <- structure(function(k) {
     t <<- t+1
   }, class="agent.receive")
 
-  structure(list(choose=choose, receive=receive), k=k, class="agent")
+  structure(list(choose=choose, receive=receive), k=k, name=paste(c("klucb(c=",c,")", collapse="")), class="agent")
 }, class="policy")
+
+
+root_search <- function(lowerbound, upperbound, center=0, f, fargs=list(), precision=1e-6, max_iteration=50) {
+  iteration_count <- 0
+  while (iteration_count < max_iteration && upperbound-lowerbound>precision) {
+    m <- (lowerbound+upperbound)/2
+    lowerbound <- ifelse(do.call(f, c(list(m),fargs))<=center, m, lowerbound)
+    upperbound <- ifelse(do.call(f, c(list(m), fargs))>center, m, upperbound)
+    iteration_count <- iteration_count + 1
+  }
+  (lowerbound+upperbound)/2
+}
 
 
 
@@ -53,6 +63,10 @@ kl_ucb_gaussian <- function(x, d, sigma2=1){
 
   return ( x + sqrt(2 * sigma2 * d) )
 
+}
+
+kl_gaussian <- function(mu1, mu2, sig1=1, sig2=1) {
+  log(sig2/sig1) + (sig1^2+(mu1-mu2)^2)/(2*sig2^2) - 1/2
 }
 
 kl_bernoulli <- function(p, q){
@@ -64,4 +78,6 @@ kl_bernoulli <- function(p, q){
   return(p * log(p/q) + (1 - p) * log((1 - p)/(1 - q)))
 
 }
+
+
 

@@ -32,7 +32,7 @@ epsilon_greedy <- structure(function(k, epsilon = 0.25) {
     t <<- t + 1
   }, class="agent.receive")
 
-  structure(list(choose=choose, receive=receive), k=k, class="agent")
+  structure(list(choose=choose, receive=receive), k=k, name=paste(c("epsgreedy(eps=",epsilon,")",collapse="")), class="agent")
 }, class="policy")
 
 exploit_or_not <- function(epsilon) {

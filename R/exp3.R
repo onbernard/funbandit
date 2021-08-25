@@ -35,7 +35,7 @@ exp3 <- structure(function(k, gamma = 0.05) {
     t <<- t + 1
   }, class="agent.receive")
 
-  structure(list(choose=choose, receive=receive), k=k, class="agent")
+  structure(list(choose=choose, receive=receive), k=k, name=paste(c("exp3(gamma=",gamma,")",collapse="")), class="agent")
 }, class="policy")
 
 

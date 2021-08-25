@@ -64,22 +64,22 @@ average <-
            iter,
            k,
            h,
-           probmat = matrix(runif(k * iter)),
+           probmat = matrix(runif(k * iter),ncol=k),
            nrow = iter,
            ncol = k) {
-    agent <- pol(k)
+    agent <- stat_policy(pol)
     rewardmat <- gen_rewardmat(h, k, probmat[1, ])
-    d <- gobble(agent)(rewardmat)
+    d <- agent(rewardmat)
     d$iter <- 1
-
     for (i in seq.int(2, iter, 1)) {
-      agent <- pol(k)
+      agent <- stat_policy(pol)
       rewardmat <- gen_rewardmat(h, k, probmat[i,])
-      dp <- gobble(agent)(rewardmat)
+      dp <- agent(rewardmat)
       dp$iter <- i
       d <- rbind(d, dp)
     }
     d$iter <- as_factor(d$iter)
-    ggplot(data = d, aes(x = t, y = cum_regret, color = iter)) +
-      geom_point(alpha = 0.8) + geom_smooth(alpha = 0.8, color = "black")
+    print(ggplot(data = d, aes(x = t, y = cum_regret, color = iter)) +
+      geom_point(alpha = 0.8) + geom_smooth(alpha = 0.8, color = "black"))
+    return(list(probmat=probmat, results=d))
   }

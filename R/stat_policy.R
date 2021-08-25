@@ -87,7 +87,7 @@ stat_policy.policy <- function(policy, polArgs=list()) {
 }
 
 #' @export
-stat_policy.ctxt_policy <- function(policy, polArgs=list()) {
+stat_policy.contextual_policy <- function(policy, polArgs=list()) {
   force(policy)
   force(polArgs)
 

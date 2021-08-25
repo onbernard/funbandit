@@ -29,4 +29,4 @@ linear_thompson_sampling <- structure(function(k, dim, iter=10, v=0.2) {
   }, class="contextual_agent.receive")
 
   structure(list(choose=choose, receive=receive), k=k, class="contextual_agent")
-}, class=c("ctxt_policy", "policy"))
+}, class=c("contextual_policy", "policy"))
