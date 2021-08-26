@@ -1,5 +1,5 @@
-epsilon_greedy <- structure(function(k, epsilon = 0.25) {
-  epsilon <- as.double(epsilon)
+epsilon_greedy <- structure(function(k, PolArgs=list(epsilon=0.25)) {
+  epsilon <- as.double(PolArgs$epsilon)
   k <- as.integer(k)
 
   Mu <- matrix(Inf, nrow = 1, ncol = k)

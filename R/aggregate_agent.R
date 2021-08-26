@@ -1,15 +1,15 @@
 #' @export
-stat_policy <- function(policy, polArgs=list()) {
-  UseMethod("stat_policy")
+aggregate_agent <- function(policy, PolArgs=list()) {
+  UseMethod("aggregate_agent")
 }
 
 #' @export
-stat_policy.policy <- function(policy, polArgs=list()) {
+aggregate_agent.policy <- function(policy, PolArgs=NULL) {
   force(policy)
-  force(polArgs)
+  force(PolArgs)
 
   pol_name <- deparse1(substitute(policy))
-  arg_name <- paste(mapply(function(n, v){paste(list(n,v), collapse="=")}, names(polArgs), polArgs), collapse=" ")
+  arg_name <- paste(mapply(function(n, v){paste(list(n,v), collapse="=")}, names(PolArgs), PolArgs), collapse=" ")
   pol_name <- paste(c(pol_name, "(", arg_name, ")"), collapse="")
 
 
@@ -21,21 +21,26 @@ stat_policy.policy <- function(policy, polArgs=list()) {
   agent <- NULL
   k <- -1
 
-  function(reward_data) {
+  structure(function(reward_data) {
     rewardmat <- prepare_reward_data(reward_data)
     if (k == -1) {
       k <<- ncol(rewardmat)
     }
     stopifnot(k == ncol(rewardmat))
     if (is.null(agent)) {
-      agent <<- do.call(policy, c(list(k=k), polArgs))
+      if (is.null(PolArgs)) {
+        agent <<- policy(k)
+      }
+      else {
+        agent <<- policy(k, PolArgs)
+      }
       Mu <<- matrix(0, nrow = 1, ncol = k)
       Nu <<- matrix(0, nrow = 1, ncol = k)
     }
 
     h <- nrow(rewardmat)
 
-    whatnext <- agent$choose()
+    whatnext <- data.frame(agent$choose(), stringsAsFactors = F)
     choice <- whatnext$which
     agent$receive(choice, rewardmat[1,choice])
     regret <- max(rewardmat[1,]) - rewardmat[1,choice]
@@ -58,7 +63,7 @@ stat_policy.policy <- function(policy, polArgs=list()) {
       d <- as.list(d) # hack
       for (i in seq.int(2,h,1)) {
 
-        whatnext <- agent$choose()
+        whatnext <- data.frame(agent$choose(), stringsAsFactors = F)
         choice <- whatnext$which
         agent$receive(choice, rewardmat[i,choice])
         regret <- max(rewardmat[i,]) - rewardmat[i,choice]
@@ -83,16 +88,16 @@ stat_policy.policy <- function(policy, polArgs=list()) {
     df$policy <- pol_name
     df$policy <- factor(df$policy)
     df
-  }
+  }, class=c("aggregated_agent"))
 }
 
 #' @export
-stat_policy.contextual_policy <- function(policy, polArgs=list()) {
+aggregate_agent.contextual_policy <- function(policy, PolArgs=list()) {
   force(policy)
-  force(polArgs)
+  force(PolArgs)
 
   pol_name <- deparse1(substitute(policy))
-  arg_name <- paste(mapply(function(n, v){paste(list(n,v), collapse="=")}, names(polArgs), polArgs), collapse=" ")
+  arg_name <- paste(mapply(function(n, v){paste(list(n,v), collapse="=")}, names(PolArgs), PolArgs), collapse=" ")
   pol_name <- paste(c(pol_name, "(", arg_name, ")"), collapse="")
 
 
@@ -105,7 +110,7 @@ stat_policy.contextual_policy <- function(policy, polArgs=list()) {
   k <- -1
   dim <- -1
 
-  function(reward_data, context_data) {
+  structure(function(reward_data, context_data) {
     rewardmat <- prepare_reward_data(reward_data)
     contextmat <- prepare_reward_data(context_data)
     if (k == -1) {
@@ -118,14 +123,14 @@ stat_policy.contextual_policy <- function(policy, polArgs=list()) {
     stopifnot(dim == ncol(contextmat))
     stopifnot(nrow(rewardmat)==nrow(contextmat))
     if (is.null(agent)) {
-      agent <<- do.call(policy, c(list(k=k, dim=dim), polArgs))
+      agent <<- do.call(policy, c(list(k=k, dim=dim), PolArgs))
       Mu <<- matrix(0, nrow = 1, ncol = k)
       Nu <<- matrix(0, nrow = 1, ncol = k)
     }
     h <- nrow(rewardmat)
 
 
-    whatnext <- agent$choose(contextmat[1,])
+    whatnext <- data.frame(agent$choose(contextmat[1,]), stringsAsFactors = F)
     choice <- whatnext$which
     agent$receive(choice, rewardmat[1,choice], contextmat[1,])
     regret <- max(rewardmat[1,]) - rewardmat[1,choice]
@@ -148,7 +153,7 @@ stat_policy.contextual_policy <- function(policy, polArgs=list()) {
       d <- as.list(d) # hack
       for (i in seq.int(2,h,1)) {
 
-        whatnext <- agent$choose(contextmat[i,])
+        whatnext <- data.frame(agent$choose(contextmat[i,]), stringsAsFactors = F)
         choice <- whatnext$which
         agent$receive(choice, rewardmat[i,choice], contextmat[i,])
         regret <- max(rewardmat[i,]) - rewardmat[i,choice]
@@ -173,5 +178,5 @@ stat_policy.contextual_policy <- function(policy, polArgs=list()) {
     df$policy <- pol_name
     df$policy <- factor(df$policy)
     df
-  }
+  }, class=c("aggregated_contextual_agent", "aggregated_agent"))
 }

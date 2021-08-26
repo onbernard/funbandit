@@ -7,8 +7,8 @@
 #' @export
 #'
 #' @examples
-upper_confidence_bound <- structure(function(k, alpha=1) {
-  alpha <- as.double(alpha)
+upper_confidence_bound <- structure(function(k, PolArgs=list(alpha=1)) {
+  alpha <- as.double(PolArgs$alpha)
   k <- as.integer(k)
 
   Mu <- matrix(Inf, nrow = 1, ncol = k)

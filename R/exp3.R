@@ -7,9 +7,9 @@
 #' @export
 #'
 #' @examples
-exp3 <- structure(function(k, gamma = 0.05) {
+exp3 <- structure(function(k, PolArgs=list(gamma = 0.05)) {
   k <- as.integer(k)
-  gamma <- as.double(gamma)
+  gamma <- as.double(PolArgs$gamma)
 
   weights <- rep(1, times=k)
   prob <- rep(0, k)

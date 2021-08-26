@@ -8,9 +8,9 @@
 #' @export
 #'
 #' @examples
-thompson_sampling <- structure(function(k, alpha = 1, beta = 1) {
-  alpha <- as.integer(alpha)
-  beta <- as.integer(beta)
+thompson_sampling <- structure(function(k, PolArgs=list(alpha = 1, beta = 1)) {
+  alpha <- as.integer(PolArgs$alpha)
+  beta <- as.integer(PolArgs$beta)
   k <- as.integer(k)
 
   Mu <- matrix(Inf, nrow = 1, ncol = k)

@@ -1,7 +1,7 @@
 
-kullback_leibler_upper_confidence_bound <- structure(function(k, c=0) {
+kullback_leibler_upper_confidence_bound <- structure(function(k, PolArgs=list(c=0)) {
   k <- as.integer(k)
-  c <- as.double(c)
+  c <- as.double(PolArgs$c)
 
   Mu <- matrix(Inf, nrow = 1, ncol = k)
   Nu <- matrix(0, nrow = 1, ncol = k)

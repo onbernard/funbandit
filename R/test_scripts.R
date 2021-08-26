@@ -29,9 +29,9 @@ test_contextual <- function(h=1000) {
   reward_data <-  cbind(K1,K2,K3)
 
   X <- list(
-            kernel_upper_confidence_bound = stat_policy(krr_upper_confidence_bound),
-            linear_upper_confidence_bound = stat_policy(linear_upper_confidence_bound),
-            linear_thompson_sampling = stat_policy(linear_thompson_sampling)
+            kernel_upper_confidence_bound = aggregate_agent(krr_upper_confidence_bound),
+            linear_upper_confidence_bound = aggregate_agent(linear_upper_confidence_bound),
+            linear_thompson_sampling = aggregate_agent(linear_thompson_sampling)
         )
 
   r <- lapply(X, function(pol){
@@ -44,11 +44,12 @@ test_normal <- function(h=100, k=3) {
   reward_data <- gen_rewardmat(h, k)
   X <-
     list(
-      upper_confidence_bound = stat_policy(upper_confidence_bound),
-      thompson_sampling = stat_policy(thompson_sampling),
-      exp3 = stat_policy(exp3),
-      epsilon_greedy = stat_policy(epsilon_greedy),
-      kullback_leibler_upper_confidence_bound = stat_policy(kullback_leibler_upper_confidence_bound)
+      upper_confidence_bound = aggregate_agent(upper_confidence_bound),
+      thompson_sampling = aggregate_agent(thompson_sampling),
+      exp3 = aggregate_agent(exp3),
+      epsilon_greedy = aggregate_agent(epsilon_greedy),
+      test_constructor = aggregate_agent(test_pol),
+      kullback_leibler_upper_confidence_bound = aggregate_agent(kullback_leibler_upper_confidence_bound)
     )
   r  <- lapply(X, function(pol){pol(reward_data)})
   compare_results(r)

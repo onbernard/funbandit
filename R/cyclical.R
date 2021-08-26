@@ -1,4 +1,4 @@
-cyclical <- structure(function(k) {
+cyclical <- structure(function(k, PolArgs=list()) {
   k <- as.integer(k)
 
   Mu <- matrix(Inf, nrow = 1, ncol = k)

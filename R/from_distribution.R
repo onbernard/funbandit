@@ -7,9 +7,9 @@
 #' @export
 #'
 #' @examples
-from_distribution <- structure(function(k, prob) {
+from_distribution <- structure(function(k, PolArgs=list(prob)) {
   k <- as.integer(k)
-  force(prob)
+  prob <- as.numeric(PolArgs$prob)
 
   choose <- structure(function() {
     which <- sample(seq.int(1,k,1), 1, prob = prob)
