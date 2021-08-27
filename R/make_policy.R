@@ -18,16 +18,7 @@ make_policy <- function(init, choose, receive, name) {
     for (i in seq_along(model_variables)) {
       e[[eval(names(model_variables)[[i]])]] <- model_variables[[i]]
     }
-
-    outp <- structure(
-      list(
-        choose = structure(choose, class = "agent_choose"),
-        receive = structure(receive, class = "agent_receive")
-      ),
-      policy_name = name,
-      k = k,
-      class = c("agent")
-    )
+    # ====================
     args <- c()
     if (length(PolArgs) == 0) {
       args <- eval(formals(init)$PolArgs)
@@ -39,15 +30,26 @@ make_policy <- function(init, choose, receive, name) {
       paste(mapply(function(n, v) {
         paste(list(n, v), collapse = "=")
       }, names(args), args), collapse = " ")
+    # ====================
+    outp <- structure(
+      list(
+        choose = structure(choose, class = "agent_choose"),
+        receive = structure(receive, class = "agent_receive")
+      ),
+      agent_name = paste(c(name, " (", argstring, ")"), collapse=""),
+      k = k,
+      class = c("agent")
+    )
 
-    attributes(outp)$policy_args <- argstring
+
+    attributes(outp)$agent_arguments <- args
 
     environment(outp$choose) <- e
     environment(outp$receive) <- e
     outp
   }
   ,
-  name = name,
+  policy_name = name,
   class = c("policy")))
 }
 

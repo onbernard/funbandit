@@ -15,4 +15,26 @@ LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
 Collate: 
-
+    'aggregate_agent.R'
+    'alternate_make_policy.R'
+    'make_policy.R'
+    'cyclical.R'
+    'epsilon_greedy.R'
+    'exp3.R'
+    'from_distribution.R'
+    'function_tests.R'
+    'kernel_upper_confidence_bound.R'
+    'krr_upper_confidence_bound.R'
+    'kullback_leibler_upper_confidence_bound.R'
+    'linear_contextual.R'
+    'linear_thompson_sampling.R'
+    'linear_upper_confidence_bound.R'
+    'logit_upper_confidence_bound.R'
+    'pol.R'
+    'prepare_reward_data.R'
+    'regret.R'
+    'test_make_policies.R'
+    'test_scripts.R'
+    'thompson_sampling.R'
+    'upper_confidence_bound.R'
+    'visualize.R'

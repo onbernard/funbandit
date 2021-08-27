@@ -1,14 +1,13 @@
-# kullback_leibler_ucb_policy <-
-#   make_policy(init_kl_ucb, choose_kl_ucb, receive_kl_ucb, name = "kl_ucb")
-
+#' @include make_policy.R
+NULL
 # =============================
 
 init_kl_ucb <- function(k, PolArgs = list(c=0)) {
   k <- as.integer(k)
   c <- as.double(PolArgs$c)
 
-  Mu <- matrix(Inf, nrow = 1, ncol = k)
-  Nu <- matrix(0, nrow = 1, ncol = k)
+  Mu <- rep(Inf, k)
+  Nu <- rep.int(0, k)
   t <- 1
   precision <- 1e-6
   list(
@@ -98,3 +97,7 @@ kl_bernoulli <- function(p, q) {
   return(p * log(p / q) + (1 - p) * log((1 - p) / (1 - q)))
 
 }
+
+kullback_leibler_ucb_policy <-
+  make_policy(init_kl_ucb, choose_kl_ucb, receive_kl_ucb, name = "kl_ucb")
+

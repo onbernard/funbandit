@@ -1,8 +1,10 @@
+#' @include make_policy.R
+NULL
 
 init_cyclical <- function(k, PolArgs = list()) {
   k <- as.integer(k)
-  Mu <- matrix(Inf, nrow = 1, ncol = k)
-  Nu <- matrix(0, nrow = 1, ncol = k)
+  Mu <- rep(Inf, k)
+  Nu <- rep.int(0, k)
   t <- 1
   list(k = k,
        Mu = Mu,

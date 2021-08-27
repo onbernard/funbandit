@@ -41,23 +41,25 @@ timings <- function(FUN, timeSeq) {
   outp
 }
 
-# data <- gen_data(10000)
-# ucb <- gobble(upper_confidence_bound(5L))(data)
-# ts <- gobble(thompson_sampling(5L))(data)
-# epsg <- gobble(epsilon_greedy(5L))(data)
-# results <- list(ucb=ucb,ts=ts,epsg=epsg)
-# compare_results(results)
 compare_results <- function(results) {
   df <- do.call(bind_rows, results)
     #cbind(ww = rep(names(results), sapply(results, nrow)), do.call(bind_rows, results))
   regretplt <-
-    ggplot(data = df, aes(x = t, y = cum_regret, color = policy)) + geom_line()
+    ggplot(data = df, aes(x = t, y = cum_regret, color = agent)) +
+    scale_colour_discrete(labels=function(x){str_wrap(x, width = 2)}) +
+    geom_smooth(size=1.6, se=F) + geom_point(size=1.5)
   choicehistplt <-
-    ggplot(df, aes(x = which, group = policy, fill = policy)) + geom_histogram(position =
+    ggplot(df, aes(x = which, group = agent, fill = agent)) + geom_histogram(position =
                                                                                "dodge", binwidth = 0.25) + theme_bw()
-  ggpubr::ggarrange(regretplt, choicehistplt)
+  ggpubr::ggarrange(regretplt, choicehistplt, common.legend = T)
 }
 
+plot_regret <- function(aggregated_agent, reward_data) {
+  df <- aggregated_agent(reward_data)
+  ggplot(data = df, aes(x = t, y = cum_regret, color = agent)) +
+    scale_colour_discrete(labels=function(x){str_wrap(x, width = 2)}) +
+    geom_smooth(size=1.6, se=F) + geom_point(size=1.5)
+}
 
 average <-
   function(pol,
@@ -67,12 +69,12 @@ average <-
            probmat = matrix(runif(k * iter),ncol=k),
            nrow = iter,
            ncol = k) {
-    agent <- stat_policy(pol)
+    agent <- stat_agent(pol)
     rewardmat <- gen_rewardmat(h, k, probmat[1, ])
     d <- agent(rewardmat)
     d$iter <- 1
     for (i in seq.int(2, iter, 1)) {
-      agent <- stat_policy(pol)
+      agent <- stat_agent(pol)
       rewardmat <- gen_rewardmat(h, k, probmat[i,])
       dp <- agent(rewardmat)
       dp$iter <- i

@@ -1,13 +1,13 @@
-# upper_confidence_bound_policy <- make_policy(init_ucb, choose_ucb, receive_ucb, "ucb")
-
+#' @include make_policy.R
+NULL
 # =============================
 
 init_ucb <- function(k, PolArgs=list(alpha=1)) {
   alpha <- as.double(PolArgs$alpha)
   k <- as.integer(k)
 
-  Mu <- matrix(Inf, nrow = 1, ncol = k)
-  Nu <- matrix(0, nrow = 1, ncol = k)
+  Mu <- rep(Inf, k)
+  Nu <- rep.int(0, k)
   t <- 1
   list(alpha=alpha, k=k, Mu=Mu, Nu=Nu, t=t)
 }
@@ -52,3 +52,5 @@ ucb <- function(mu, nu, alpha, t) {
     mu + alpha * sqrt((2 * log(t)) / nu)
   }
 }
+
+upper_confidence_bound_policy <- make_policy(init_ucb, choose_ucb, receive_ucb, "ucb")

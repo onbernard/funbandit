@@ -1,10 +1,5 @@
-# thompson_sampling_policy <-
-#   make_policy(
-#     init_thompson_sampling,
-#     choose_thompson_sampling,
-#     receive_thompson_sampling,
-#     "thompson_sampling"
-#   )
+#' @include make_policy.R
+NULL
 
 # =============================
 
@@ -14,8 +9,8 @@ init_thompson_sampling <-
     beta <- as.integer(PolArgs$beta)
     k <- as.integer(k)
 
-    Mu <- matrix(Inf, nrow = 1, ncol = k)
-    Nu <- matrix(0, nrow = 1, ncol = k)
+    Mu <- rep(Inf, k)
+    Nu <- rep.int(0, k)
     t <- 1
     list(
       alpha = alpha,
@@ -63,3 +58,11 @@ ts <- function(mu, nu, alpha, beta) {
   out <- rbeta(1, alpha + mu * nu, beta + nu - mu * nu)
   out
 }
+
+thompson_sampling_policy <-
+  make_policy(
+    init_thompson_sampling,
+    choose_thompson_sampling,
+    receive_thompson_sampling,
+    "thompson_sampling"
+  )

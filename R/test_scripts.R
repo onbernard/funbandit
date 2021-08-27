@@ -40,16 +40,16 @@ test_contextual <- function(h=1000) {
   compare_results(r)
 }
 
-test_normal <- function(h=100, k=3) {
+test_normal <- function(h=200, k=3) {
   reward_data <- gen_rewardmat(h, k)
   X <-
     list(
-      upper_confidence_bound = aggregate_agent(upper_confidence_bound),
-      thompson_sampling = aggregate_agent(thompson_sampling),
-      exp3 = aggregate_agent(exp3),
-      epsilon_greedy = aggregate_agent(epsilon_greedy),
+      upper_confidence_bound = aggregate_agent(upper_confidence_bound_policy),
+      thompson_sampling = aggregate_agent(thompson_sampling_policy),
+      exp3 = aggregate_agent(exp3_policy),
+      epsilon_greedy = aggregate_agent(epsilon_greedy_policy),
       test_constructor = aggregate_agent(test_pol),
-      kullback_leibler_upper_confidence_bound = aggregate_agent(kullback_leibler_upper_confidence_bound)
+      kullback_leibler_upper_confidence_bound = aggregate_agent(kullback_leibler_ucb_policy)
     )
   r  <- lapply(X, function(pol){pol(reward_data)})
   compare_results(r)

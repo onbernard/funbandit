@@ -1,13 +1,12 @@
-# exp3_policy <-
-#   make_policy(init_exp3, choose_exp3, receive_exp3, name = "exp3")
+#' @include make_policy.R
+NULL
 
-# =============================
 
 init_exp3 <- function(k, PolArgs = list(gamma = 0.05)) {
   k <- as.integer(k)
   gamma <- as.double(PolArgs$gamma)
 
-  weights <- rep(1, times = k)
+  weights <- rep(1, k)
   prob <- rep(0, k)
   last_reward <- 0
   estimated_reward <- Inf
@@ -36,7 +35,7 @@ choose_exp3 <- function() {
   }
 }
 
-receive_exp3 <- function() {
+receive_exp3 <- function(arm, reward) {
   last_reward <<- reward
   prob <<-
     mapply(expp, weights, MoreArgs = list(sum(weights), k, gamma))
@@ -59,3 +58,6 @@ receive_exp3 <- function() {
 expp <- function(w, sum, k, gamma) {
   (1 - gamma) * (w / sum) + (gamma / k)
 }
+
+exp3_policy <-
+  make_policy(init_exp3, choose_exp3, receive_exp3, name = "exp3")

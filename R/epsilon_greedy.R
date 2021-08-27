@@ -1,10 +1,7 @@
-# epsilon_greedy_policy <-
-#   make_policy(
-#     init_epsilon_greedy,
-#     choose_epsilon_greedy,
-#     receive_epsilon_greedy,
-#     "epsilon_greedy"
-#   )
+#' @include make_policy.R
+NULL
+
+
 
 # =============================
 
@@ -12,8 +9,8 @@ init_epsilon_greedy <- function(k, PolArgs = list(epsilon = 0.25)) {
   epsilon <- as.double(PolArgs$epsilon)
   k <- as.integer(k)
 
-  Mu <- matrix(Inf, nrow = 1, ncol = k)
-  Nu <- matrix(0, nrow = 1, ncol = k)
+  Mu <- rep(Inf, k)
+  Nu <- rep.int(0, k)
   t <- 1
   list(
     epsilon = epsilon,
@@ -58,3 +55,11 @@ exploit_or_not <- function(epsilon) {
     prob = c(1 - epsilon, epsilon)
   )
 }
+
+epsilon_greedy_policy <-
+  make_policy(
+    init_epsilon_greedy,
+    choose_epsilon_greedy,
+    receive_epsilon_greedy,
+    "epsilon_greedy"
+  )
