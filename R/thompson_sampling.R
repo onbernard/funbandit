@@ -1,46 +1,52 @@
-#' Thompson Sampling Policy
-#'
-#' @param k number of arms
-#' @param alpha first beta distribution parameter
-#' @param beta second beta distribution parameter
-#'
-#' @return An agent object, i.e. a list of two functions : choose and receive
-#' @export
-#'
-#' @examples
-thompson_sampling <- structure(function(k, PolArgs=list(alpha = 1, beta = 1)) {
-  alpha <- as.integer(PolArgs$alpha)
-  beta <- as.integer(PolArgs$beta)
-  k <- as.integer(k)
+# thompson_sampling_policy <-
+#   make_policy(
+#     init_thompson_sampling,
+#     choose_thompson_sampling,
+#     receive_thompson_sampling,
+#     "thompson_sampling"
+#   )
 
-  Mu <- matrix(Inf, nrow = 1, ncol = k)
-  Nu <- matrix(0, nrow = 1, ncol = k)
-  t <- 1
+# =============================
 
-  choose <- structure(function() {
-    if (t <= k) {
-      data.frame(which=t, tsample=Inf, stringsAsFactors = FALSE)
-    }
-    else {
-      indices <- mapply(ts, Mu, Nu, alpha, beta)
-      data.frame(which=which.max(indices), tsample=max(indices), stringsAsFactors = FALSE)
-    }
-  }, class="agent.choose")
+init_thompson_sampling <-
+  function(k, PolArgs = list(alpha = 1, beta = 1)) {
+    alpha <- as.integer(PolArgs$alpha)
+    beta <- as.integer(PolArgs$beta)
+    k <- as.integer(k)
 
-  receive <- structure(function(arm, reward) {
-    if (Nu[arm] == 0) {
-      Mu[arm] <<- reward
-    }
-    else {
-      Mu[arm] <<- ((Mu[arm] * Nu[arm] + reward) / (Nu[arm] + 1))
-    }
-    Nu[arm] <<- Nu[arm] + 1
-    t <<- t+1
-  }, class="agent.receive")
+    Mu <- matrix(Inf, nrow = 1, ncol = k)
+    Nu <- matrix(0, nrow = 1, ncol = k)
+    t <- 1
+    list(
+      alpha = alpha,
+      beta = beta,
+      k = k,
+      Mu = Mu,
+      Nu = Nu,
+      t = t
+    )
+  }
 
-  structure(list(choose=choose, receive=receive), k=k, name="ts", class="agent")
-}, class="policy")
+choose_thompson_sampling <- function() {
+  if (t <= k) {
+    list(which = t, tsample = Inf)
+  }
+  else {
+    indices <- mapply(ts, Mu, Nu, alpha, beta)
+    list(which = which.max(indices), tsample = max(indices))
+  }
+}
 
+receive_thompson_sampling <- function(arm, reward) {
+  if (Nu[arm] == 0) {
+    Mu[arm] <<- reward
+  }
+  else {
+    Mu[arm] <<- ((Mu[arm] * Nu[arm] + reward) / (Nu[arm] + 1))
+  }
+  Nu[arm] <<- Nu[arm] + 1
+  t <<- t + 1
+}
 
 #' Thompson sample value of an arm
 #'
@@ -54,6 +60,6 @@ thompson_sampling <- structure(function(k, PolArgs=list(alpha = 1, beta = 1)) {
 #'
 #' @examples
 ts <- function(mu, nu, alpha, beta) {
-  out <- rbeta(1, alpha + mu*nu, beta + nu - mu*nu)
+  out <- rbeta(1, alpha + mu * nu, beta + nu - mu * nu)
   out
 }

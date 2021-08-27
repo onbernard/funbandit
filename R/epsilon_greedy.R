@@ -1,39 +1,54 @@
-epsilon_greedy <- structure(function(k, PolArgs=list(epsilon=0.25)) {
+# epsilon_greedy_policy <-
+#   make_policy(
+#     init_epsilon_greedy,
+#     choose_epsilon_greedy,
+#     receive_epsilon_greedy,
+#     "epsilon_greedy"
+#   )
+
+# =============================
+
+init_epsilon_greedy <- function(k, PolArgs = list(epsilon = 0.25)) {
   epsilon <- as.double(PolArgs$epsilon)
   k <- as.integer(k)
 
   Mu <- matrix(Inf, nrow = 1, ncol = k)
   Nu <- matrix(0, nrow = 1, ncol = k)
   t <- 1
+  list(
+    epsilon = epsilon,
+    k = k,
+    Mu = Mu,
+    Nu = Nu,
+    t = t
+  )
+}
 
-  choose <- structure(function() {
-    if (t <= k) {
-      data.frame(which = t, why="explore", stringsAsFactors = FALSE)
-    }
-    else {
-      whatdo <- exploit_or_not(epsilon)
-      which <- switch(
-        whatdo,
-        "exploit" = which.max(Mu),
-        "explore" = sample(1:k, size = 1, replace = TRUE)
-      )
-      data.frame(which=which, why=whatdo, stringsAsFactors = FALSE)
-    }
-  }, class="agent.choose")
+choose_epsilon_greedy <- function() {
+  if (t <= k) {
+    list(which = t, why = "explore")
+  }
+  else {
+    whatdo <- exploit_or_not(epsilon)
+    which <- switch(
+      whatdo,
+      "exploit" = which.max(Mu),
+      "explore" = sample(1:k, size = 1, replace = TRUE)
+    )
+    list(which = which, why = whatdo)
+  }
+}
 
-  receive <- structure(function(arm, reward) {
-    if (Nu[arm] == 0) {
-      Mu[arm] <<- reward
-    }
-    else {
-      Mu[arm] <<- ((Mu[arm] * Nu[arm] + reward) / (Nu[arm] + 1))
-    }
-    Nu[arm] <<- Nu[arm] + 1
-    t <<- t + 1
-  }, class="agent.receive")
-
-  structure(list(choose=choose, receive=receive), k=k, name=paste(c("epsgreedy(eps=",epsilon,")",collapse="")), class="agent")
-}, class="policy")
+receive_epsilon_greedy <- function(arm, reward) {
+  if (Nu[arm] == 0) {
+    Mu[arm] <<- reward
+  }
+  else {
+    Mu[arm] <<- ((Mu[arm] * Nu[arm] + reward) / (Nu[arm] + 1))
+  }
+  Nu[arm] <<- Nu[arm] + 1
+  t <<- t + 1
+}
 
 exploit_or_not <- function(epsilon) {
   sample(

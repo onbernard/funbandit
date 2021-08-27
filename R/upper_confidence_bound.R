@@ -1,44 +1,37 @@
-#' Upper Confidence Bound Policy
-#'
-#' @param k number of arms
-#' @param alpha exploration parameter
-#'
-#' @return An agent object, i.e. a list of two functions : choose and receive
-#' @export
-#'
-#' @examples
-upper_confidence_bound <- structure(function(k, PolArgs=list(alpha=1)) {
+# upper_confidence_bound_policy <- make_policy(init_ucb, choose_ucb, receive_ucb, "ucb")
+
+# =============================
+
+init_ucb <- function(k, PolArgs=list(alpha=1)) {
   alpha <- as.double(PolArgs$alpha)
   k <- as.integer(k)
 
   Mu <- matrix(Inf, nrow = 1, ncol = k)
   Nu <- matrix(0, nrow = 1, ncol = k)
   t <- 1
+  list(alpha=alpha, k=k, Mu=Mu, Nu=Nu, t=t)
+}
 
-  choose <- structure(function() {
-    indices <- mapply(ucb, Mu, Nu, MoreArgs = list(alpha, t))
-    which <- which.max(indices)
-    maxucb <- max(indices)
-    if (maxucb == Inf) {
-      maxucb <- NA
-    }
-    data.frame(which=which, maxucb=maxucb, stringsAsFactors = FALSE)
-  }, class="agent.choose")
+choose_ucb <- function() {
+  indices <- mapply(ucb, Mu, Nu, MoreArgs = list(alpha, t))
+  which <- which.max(indices)
+  maxucb <- max(indices)
+  if (maxucb == Inf) {
+    maxucb <- NA
+  }
+  list(which=which, maxucb=maxucb)
+}
 
-  receive <- structure(function(arm, reward) {
-    if (Nu[arm] == 0) {
-      Mu[arm] <<- reward
-    }
-    else {
-      Mu[arm] <<- ((Mu[arm] * Nu[arm] + reward) / (Nu[arm] + 1))
-    }
-    Nu[arm] <<- Nu[arm] + 1
-    t <<- t+1
-  }, class="agent.receive")
-
-  structure(list(choose=choose, receive=receive), k=k, name=paste(c("ucb(alpha=",alpha, ")"), collapse=""), class="agent")
-}, class="policy")
-
+receive_ucb <- function(arm, reward) {
+  if (Nu[arm] == 0) {
+    Mu[arm] <<- reward
+  }
+  else {
+    Mu[arm] <<- ((Mu[arm] * Nu[arm] + reward) / (Nu[arm] + 1))
+  }
+  Nu[arm] <<- Nu[arm] + 1
+  t <<- t+1
+}
 
 #' Upper Confidence Bound value of an arm
 #'
