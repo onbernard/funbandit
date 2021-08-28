@@ -5,7 +5,7 @@ NULL
 
 # =============================
 
-init_epsilon_greedy <- function(k, PolArgs = list(epsilon = 0.25)) {
+init_epsilon_greedy <- function(k, PolArgs=list(epsilon=0.25)) {
   epsilon <- as.double(PolArgs$epsilon)
   k <- as.integer(k)
 

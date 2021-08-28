@@ -15,6 +15,7 @@ LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
 Collate: 
+    'aaaa.R'
     'aggregate_agent.R'
     'alternate_make_policy.R'
     'make_policy.R'
@@ -32,7 +33,8 @@ Collate:
     'logit_upper_confidence_bound.R'
     'pol.R'
     'prepare_reward_data.R'
-    'regret.R'
+    'run_policy.R'
+    'special_make.R'
     'test_make_policies.R'
     'test_scripts.R'
     'thompson_sampling.R'

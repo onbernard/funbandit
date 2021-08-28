@@ -45,14 +45,22 @@ compare_results <- function(results) {
   df <- do.call(bind_rows, results)
     #cbind(ww = rep(names(results), sapply(results, nrow)), do.call(bind_rows, results))
   regretplt <-
-    ggplot(data = df, aes(x = t, y = cum_regret, color = agent)) +
+    ggplot(data = df, aes(x = t, y = cum_regret, color = policy)) +
     scale_colour_discrete(labels=function(x){str_wrap(x, width = 2)}) +
-    geom_smooth(size=1.6, se=F) + geom_point(size=1.5)
+    geom_smooth(size=1.6, se=F) + geom_point(size=1.5) + theme_bw()
   choicehistplt <-
-    ggplot(df, aes(x = which, group = agent, fill = agent)) + geom_histogram(position =
+    ggplot(df, aes(x = which, group = policy, fill = policy)) + geom_histogram(position =
                                                                                "dodge", binwidth = 0.25) + theme_bw()
   ggpubr::ggarrange(regretplt, choicehistplt, common.legend = T)
 }
+
+# TODO : add arm mean to hist
+# plot_hist <- function(results, rewardmat) {
+#   choicehistplt <-
+#     ggplot(df, aes(x = which, group = policy, fill = policy)) + geom_histogram(position =
+#                                                                                  "dodge", binwidth = 0.25) + theme_bw()
+#   choicehistplt
+# }
 
 plot_regret <- function(aggregated_agent, reward_data) {
   df <- aggregated_agent(reward_data)

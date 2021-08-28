@@ -1,16 +1,16 @@
 run_policy <- function(policy, PolArgs = NULL, X, reward, analyze) {
 
   h <- length(X)
-  agent <- aggregate_agent(policy, PolArgs)
+  agent <- do.call(policy, PolArgs)
 
   choice <- agent$choose()
   reward <- reward(X[1], choice)
-  additional_infos <- analyze(X[1], choice, reward)
-  agent$receive(whatnext)
+  analysis <- analyze(X[1], choice, reward)
+  do.call(agent$receive, reward)
   myrow <-
     data.frame(
       t=X[1],
-      analyze,
+      analysis,
       stringsAsFactors = F
     )
 
@@ -22,12 +22,12 @@ run_policy <- function(policy, PolArgs = NULL, X, reward, analyze) {
     for (i in seq_along(X)) {
       choice <- agent$choose()
       reward <- reward(X[i], choice)
-      additional_infos <- analyze(X[i], choice, reward)
-      agent$receive(whatnext)
+      analysis <- analyze(X[i], choice, reward)
+      do.call(agent$receive, reward)
       myrow <-
         data.frame(
           t=X[i],
-          analyze,
+          analysis,
           stringsAsFactors = F
         )
 
@@ -37,7 +37,7 @@ run_policy <- function(policy, PolArgs = NULL, X, reward, analyze) {
     }
   }
   df <- data.frame(d, stringsAsFactors = FALSE)
-  df$policy <- pol_name
+  df$policy <- attributes(agent)$name
   df$policy <- factor(df$policy)
   df
 }
