@@ -1,7 +1,7 @@
 #' @include make_policy.R
 NULL
 
-init_cyclical <- function(k, PolArgs = list()) {
+init_cyclical <- function(k) {
   k <- as.integer(k)
   Mu <- rep(Inf, k)
   Nu <- rep.int(0, k)

@@ -41,17 +41,42 @@ timings <- function(FUN, timeSeq) {
   outp
 }
 
+
 compare_results <- function(results) {
   df <- do.call(bind_rows, results)
-    #cbind(ww = rep(names(results), sapply(results, nrow)), do.call(bind_rows, results))
+  #cbind(ww = rep(names(results), sapply(results, nrow)), do.call(bind_rows, results))
+  # labels = function(x) {str_wrap(x, width = 2) }
+  df$policy <- stringr::str_wrap(df$policy, width = 6)
   regretplt <-
     ggplot(data = df, aes(x = t, y = cum_regret, color = policy)) +
-    scale_colour_discrete(labels=function(x){str_wrap(x, width = 2)}) +
-    geom_smooth(size=1.6, se=F) + geom_point(size=1.5) + theme_bw()
-  choicehistplt <-
-    ggplot(df, aes(x = which, group = policy, fill = policy)) + geom_histogram(position =
-                                                                               "dodge", binwidth = 0.25) + theme_bw()
-  ggpubr::ggarrange(regretplt, choicehistplt, common.legend = T)
+    scale_color_viridis_d() +
+    geom_smooth(size = 1.6, se = F) + geom_point(size = 1.5)
+
+
+  cir <-
+    ggplot(df, aes(policy, fill = factor(which))) +
+    scale_fill_viridis_d() +
+    geom_bar() + theme(axis.text.x = element_text(angle = -90, vjust = 0.5)) +
+    coord_polar(theta="y")
+
+
+  propplt <-
+    ggplot(df, aes(fill = policy)) +
+    scale_fill_viridis_d() +
+    geom_bar(aes(x=which, y=..prop..), position="dodge") +
+    scale_y_continuous(labels = scales::percent)
+
+  choiceplt <-
+    ggplot(df, aes(x=t, y=factor(which))) +
+    geom_step(aes(color=policy, group=1)) + facet_grid(policy ~ .) +
+    theme(legend.position = "none") + theme(strip.text.y = element_text(angle = 0)) +
+    scale_color_viridis_d()
+
+  #ggpubr::ggarrange(regretplt, propplt, choiceplt, cir)
+  gridExtra::grid.arrange(choiceplt,
+               arrangeGrob(cir, propplt, ncol=2),
+               regretplt,
+               nrow=3)
 }
 
 # TODO : add arm mean to hist

@@ -4,9 +4,9 @@ NULL
 # =============================
 
 init_thompson_sampling <-
-  function(k, PolArgs = list(alpha = 1, beta = 1)) {
-    alpha <- as.integer(PolArgs$alpha)
-    beta <- as.integer(PolArgs$beta)
+  function(k, alpha = 1, beta = 1) {
+    alpha <- as.integer(alpha)
+    beta <- as.integer(beta)
     k <- as.integer(k)
 
     Mu <- rep(Inf, k)

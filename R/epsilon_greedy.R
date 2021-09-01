@@ -5,8 +5,8 @@ NULL
 
 # =============================
 
-init_epsilon_greedy <- function(k, PolArgs=list(epsilon=0.25)) {
-  epsilon <- as.double(PolArgs$epsilon)
+init_epsilon_greedy <- function(k, epsilon=0.25) {
+  epsilon <- as.double(epsilon)
   k <- as.integer(k)
 
   Mu <- rep(Inf, k)

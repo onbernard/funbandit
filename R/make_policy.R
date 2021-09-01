@@ -1,55 +1,57 @@
 
 #' @export
 make_policy <- function(init, choose, receive, name) {
-  list(init, choose, receive, name)
   force(init)
   force(choose)
   force(receive)
   name <- as.character(name)
 
 
-  return(structure(function(k, PolArgs = eval(formals(init)$PolArgs)) {
-    force(k)
-    lapply(PolArgs, force)
+  return(structure(function(...) {
+    PolArgs <- list(...)
+
+    if (length(PolArgs) != sum(nzchar(names(PolArgs)))) {
+      rlang::abort("All arguments of a policy must be named.")
+    }
+
+    arguments <- formals(init)
+    for ( i in seq_along(PolArgs)) {
+      arguments[[eval(names(PolArgs)[[i]])]] <- PolArgs[[i]]
+    }
+    arguments$k <- NULL
 
     # === Create and fill agent environment
     e <- new.env()
-    model_variables <- init(k, PolArgs)
-    for (i in seq_along(model_variables)) {
-      e[[eval(names(model_variables)[[i]])]] <- model_variables[[i]]
+    model <- do.call(init, c(PolArgs))
+    if (typeof(model) != "list") {
+      rlang::abort("A policy initiator must return a named list.")
     }
+    if (length(model) != sum(nzchar(names(model)))) {
+      rlang::abort("A policy initiator must return a named list.")
+    }
+
+    list2env(model, envir = e)
     # ====================
-    args <- c()
-    if (length(PolArgs) == 0) {
-      args <- eval(formals(init)$PolArgs)
-    }
-    else {
-      args <- PolArgs
-    }
-    argstring <-
-      paste(mapply(function(n, v) {
-        paste(list(n, v), collapse = "=")
-      }, names(args), args), collapse = " ")
+
     # ====================
     outp <- structure(
       list(
-        choose = structure(choose, class = "agent_choose"),
-        receive = structure(receive, class = "agent_receive")
+        choose = choose,
+        receive = receive
       ),
-      agent_name = paste(c(name, " (", argstring, ")"), collapse=""),
-      k = k,
+      policy_name=name,
+      agent_name = paste(c(name, " (", paste(names(arguments), arguments, sep = "=", collapse=" "), ")"), collapse=""),
+      arguments = arguments,
       class = c("agent")
     )
-
-
-    attributes(outp)$agent_arguments <- args
 
     environment(outp$choose) <- e
     environment(outp$receive) <- e
     outp
   }
   ,
-  policy_name = name,
+  name = name,
   class = c("policy")))
 }
+
 

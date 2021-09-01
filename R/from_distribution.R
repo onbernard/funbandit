@@ -3,9 +3,9 @@ NULL
 
 # =============================
 
-init_from_distribution <- function(k, PolArgs = list(prob=rep.int(1,k))) {
+init_from_distribution <- function(k, prob=rep.int(1,k)) {
   k <- as.integer(k)
-  prob <- as.numeric(PolArgs$prob)
+  prob <- as.numeric(prob)
 }
 
 choose_from_distribution <- function() {

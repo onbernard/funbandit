@@ -2,9 +2,9 @@
 NULL
 
 
-init_exp3 <- function(k, PolArgs = list(gamma = 0.05)) {
+init_exp3 <- function(k, gamma = 0.05) {
   k <- as.integer(k)
-  gamma <- as.double(PolArgs$gamma)
+  gamma <- as.double(gamma)
 
   weights <- rep(1, k)
   prob <- rep(0, k)

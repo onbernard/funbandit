@@ -2,8 +2,8 @@
 NULL
 # =============================
 
-init_ucb <- function(k, PolArgs=list(alpha=1)) {
-  alpha <- as.double(PolArgs$alpha)
+init_ucb <- function(k, alpha=1) {
+  alpha <- as.double(alpha)
   k <- as.integer(k)
 
   Mu <- rep(Inf, k)

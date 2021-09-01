@@ -1,11 +1,11 @@
-run_policy <- function(policy, PolArgs = NULL, X, reward, analyze) {
+run_policy <- function(policy, PolArgs = NULL, X, getreward, getanalyze) {
 
   h <- length(X)
   agent <- do.call(policy, PolArgs)
 
   choice <- agent$choose()
-  reward <- reward(X[1], choice)
-  analysis <- analyze(X[1], choice, reward)
+  reward <- getreward(X[1], choice)
+  analysis <- getanalyze(X[1], choice, reward)
   do.call(agent$receive, reward)
   myrow <-
     data.frame(
@@ -21,8 +21,8 @@ run_policy <- function(policy, PolArgs = NULL, X, reward, analyze) {
     d <- as.list(d) # hack
     for (i in seq_along(X)) {
       choice <- agent$choose()
-      reward <- reward(X[i], choice)
-      analysis <- analyze(X[i], choice, reward)
+      reward <- getreward(X[i], choice)
+      print("lol2")
       do.call(agent$receive, reward)
       myrow <-
         data.frame(

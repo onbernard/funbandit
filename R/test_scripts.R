@@ -51,19 +51,11 @@ test_normal <- function(h = 200, k = 3) {
       thompson_sampling = aggregate_agent(thompson_sampling_policy),
       exp3 = aggregate_agent(exp3_policy),
       epsilon_greedy = aggregate_agent(epsilon_greedy_policy),
-      test_constructor = aggregate_agent(test_pol),
       kullback_leibler_upper_confidence_bound = aggregate_agent(kullback_leibler_ucb_policy)
     )
   r  <- lapply(X, function(pol) {
     pol(reward_data)
   })
-  print(list(h, k))
-  lol <- run_policy(
-    special_eps,
-    list(k = k),
-    seq.int(1, h, 1),
-    rewards_from_matrix(reward_data),
-    info_regret(reward_data)
-  )
+
   compare_results(r)
 }

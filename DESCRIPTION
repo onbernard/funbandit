@@ -32,6 +32,7 @@ Collate:
     'linear_upper_confidence_bound.R'
     'logit_upper_confidence_bound.R'
     'pol.R'
+    'polproto.R'
     'prepare_reward_data.R'
     'run_policy.R'
     'special_make.R'

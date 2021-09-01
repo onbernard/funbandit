@@ -2,9 +2,9 @@
 NULL
 # =============================
 
-init_kl_ucb <- function(k, PolArgs = list(c=0)) {
+init_kl_ucb <- function(k, c=0) {
   k <- as.integer(k)
-  c <- as.double(PolArgs$c)
+  c <- as.double(c)
 
   Mu <- rep(Inf, k)
   Nu <- rep.int(0, k)

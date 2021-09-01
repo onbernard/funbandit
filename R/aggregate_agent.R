@@ -8,13 +8,6 @@ aggregate_agent.policy <- function(policy, PolArgs = NULL) {
   force(policy)
   force(PolArgs)
 
-  pol_name <- deparse1(substitute(policy))
-  arg_name <-
-    paste(mapply(function(n, v) {
-      paste(list(n, v), collapse = "=")
-    }, names(PolArgs), PolArgs), collapse = " ")
-  pol_name <- paste(c(pol_name, "(", arg_name, ")"), collapse = "")
-
 
   Mu <- NULL
   Nu <- NULL
@@ -32,10 +25,10 @@ aggregate_agent.policy <- function(policy, PolArgs = NULL) {
     stopifnot(k == ncol(rewardmat))
     if (is.null(agent)) {
       if (is.null(PolArgs)) {
-        agent <<- policy(k)
+        agent <<- policy(k=k)
       }
       else {
-        agent <<- policy(k, PolArgs)
+        agent <<- do.call(policy, PolArgs)
       }
       Mu <<- matrix(0, nrow = 1, ncol = k)
       Nu <<- matrix(0, nrow = 1, ncol = k)
@@ -102,7 +95,7 @@ aggregate_agent.policy <- function(policy, PolArgs = NULL) {
       }
     }
     df <- data.frame(d, stringsAsFactors = FALSE)
-    df$policy <- pol_name
+    df$policy <- attributes(agent)$agent_name
     df$policy <- factor(df$policy)
     df
   }, class = c("aggregated_agent"))
