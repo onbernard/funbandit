@@ -53,4 +53,3 @@ ucb <- function(mu, nu, alpha, t) {
   }
 }
 
-upper_confidence_bound_policy <- make_policy(init_ucb, choose_ucb, receive_ucb, "ucb")

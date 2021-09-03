@@ -1,5 +1,4 @@
-#' @include make_policy.R
-NULL
+
 
 init_cyclical <- function(k) {
   k <- as.integer(k)
@@ -27,4 +26,3 @@ receive_cyclical <- function(arm, reward) {
   t <<- t %% k + 1
 }
 
-cyclical <- make_policy(init_cyclical, choose_cyclical, receive_cyclical, "cyclical")

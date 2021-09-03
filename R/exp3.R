@@ -59,5 +59,3 @@ expp <- function(w, sum, k, gamma) {
   (1 - gamma) * (w / sum) + (gamma / k)
 }
 
-exp3_policy <-
-  make_policy(init_exp3, choose_exp3, receive_exp3, name = "exp3")

@@ -5,8 +5,6 @@ library(ggpubr)
 library(microbenchmark)
 library(ggplot2)
 
-#' @include aaaa.R
-NULL
 
 gen_rewardmat <- function(h, k, prob = runif(k)) {
   mat <- matrix(NA, ncol = k, nrow = h)
@@ -47,11 +45,12 @@ test_normal <- function(h = 200, k = 3) {
   reward_data <- gen_rewardmat(h, k)
   X <-
     list(
-      upper_confidence_bound = aggregate_agent(upper_confidence_bound_policy),
-      thompson_sampling = aggregate_agent(thompson_sampling_policy),
-      exp3 = aggregate_agent(exp3_policy),
-      epsilon_greedy = aggregate_agent(epsilon_greedy_policy),
-      kullback_leibler_upper_confidence_bound = aggregate_agent(kullback_leibler_ucb_policy)
+      upper_confidence_bound = upper_confidence_bound_policy(),
+      thompson_sampling = thompson_sampling_policy(),
+      exp3 = exp3_policy(),
+      epsilon_greedy = epsilon_greedy_policy(),
+      kullback_leibler_upper_confidence_bound = kullback_leibler_ucb_policy(),
+      other_ucb = upper_confidence_bound_policy(alpha=10)
     )
   r  <- lapply(X, function(pol) {
     pol(reward_data)

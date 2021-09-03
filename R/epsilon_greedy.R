@@ -2,7 +2,6 @@
 NULL
 
 
-
 # =============================
 
 init_epsilon_greedy <- function(k, epsilon=0.25) {
@@ -56,10 +55,4 @@ exploit_or_not <- function(epsilon) {
   )
 }
 
-epsilon_greedy_policy <-
-  make_policy(
-    init_epsilon_greedy,
-    choose_epsilon_greedy,
-    receive_epsilon_greedy,
-    "epsilon_greedy"
-  )
+

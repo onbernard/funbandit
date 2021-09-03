@@ -16,10 +16,4 @@ choose_from_distribution <- function() {
 receive_from_distribution <- function(arm, reward) {
 }
 
-from_distribution_policy <-
-  make_policy(
-    init_from_distribution,
-    choose_from_distribution,
-    receive_from_distribution,
-    name = "from_distribution"
-  )
+

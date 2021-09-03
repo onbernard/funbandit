@@ -1,5 +1,49 @@
 
 
+funmake <- function(init, choose, receive, name, argnames) {
+  force(init)
+  force(choose)
+  force(receive)
+  name <- as.character(name)
+  argnames <- as.character(argnames)
+
+  structure(function(...) {
+    PolArgs <- list(...)
+
+    p <- parent.env(environment())
+    init <- p$init
+    choose <- p$choose
+    receive <- p$receive
+    name <- p$name
+    argnames <- p$argnames
+
+    if (length(PolArgs) != sum(nzchar(names(PolArgs)))) {
+      rlang::abort("All arguments must be named.")
+    }
+
+    arguments <- formals(init)
+    for ( i in seq_along(PolArgs)) {
+      arguments[[eval(names(PolArgs)[[i]])]] <- PolArgs[[i]]
+    }
+    arguments <- arguments[argnames]
+
+
+    bandit <- do.call(init, PolArgs)
+
+    structure(
+      bandit,
+      choose=choose,
+      receive=receive,
+      agent_name = paste(c(name, " (", paste(names(arguments), arguments, sep = "=", collapse=" "), ")"), collapse=""),
+      policy_name = name,
+      class="agent")
+  },
+  name=name,
+  class="policy")
+}
+
+
+
 
 #' @export
 deprecated_make_policy <- function(init, choose, receive, name) {

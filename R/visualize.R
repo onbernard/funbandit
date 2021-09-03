@@ -55,26 +55,27 @@ compare_results <- function(results) {
 
   cir <-
     ggplot(df, aes(policy, fill = factor(which))) +
-    scale_fill_viridis_d() +
+    ggsci::scale_fill_jco() +
     geom_bar() + theme(axis.text.x = element_text(angle = -90, vjust = 0.5)) +
-    coord_polar(theta="y")
-
+    labs(fill="arm")
 
   propplt <-
     ggplot(df, aes(fill = policy)) +
     scale_fill_viridis_d() +
     geom_bar(aes(x=which, y=..prop..), position="dodge") +
-    scale_y_continuous(labels = scales::percent)
+    scale_y_continuous(labels = scales::percent) +
+    labs(x="arm")
 
   choiceplt <-
     ggplot(df, aes(x=t, y=factor(which))) +
     geom_step(aes(color=policy, group=1)) + facet_grid(policy ~ .) +
     theme(legend.position = "none") + theme(strip.text.y = element_text(angle = 0)) +
-    scale_color_viridis_d()
+    scale_color_viridis_d() +
+    labs(y="arm") + theme_dark()
 
   #ggpubr::ggarrange(regretplt, propplt, choiceplt, cir)
   gridExtra::grid.arrange(choiceplt,
-               arrangeGrob(cir, propplt, ncol=2),
+               gridExtra::arrangeGrob(cir, propplt, ncol=2),
                regretplt,
                nrow=3)
 }

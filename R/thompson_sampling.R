@@ -59,10 +59,4 @@ ts <- function(mu, nu, alpha, beta) {
   out
 }
 
-thompson_sampling_policy <-
-  make_policy(
-    init_thompson_sampling,
-    choose_thompson_sampling,
-    receive_thompson_sampling,
-    "thompson_sampling"
-  )
+

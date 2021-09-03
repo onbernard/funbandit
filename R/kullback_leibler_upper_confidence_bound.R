@@ -98,6 +98,4 @@ kl_bernoulli <- function(p, q) {
 
 }
 
-kullback_leibler_ucb_policy <-
-  make_policy(init_kl_ucb, choose_kl_ucb, receive_kl_ucb, name = "kl_ucb")
 
