@@ -1,6 +1,3 @@
-#' @include make_policy.R
-NULL
-
 
 # =============================
 

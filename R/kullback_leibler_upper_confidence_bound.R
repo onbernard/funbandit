@@ -1,5 +1,4 @@
-#' @include make_policy.R
-NULL
+
 # =============================
 
 init_kl_ucb <- function(k, c=0) {

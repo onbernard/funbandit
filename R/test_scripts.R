@@ -30,9 +30,10 @@ test_contextual <- function(h = 1000) {
   reward_data <-  cbind(K1, K2, K3)
 
   X <- list(
-    kernel_upper_confidence_bound = aggregate_agent(krr_upper_confidence_bound),
+    # kernel_upper_confidence_bound = aggregate_agent(krr_upper_confidence_bound),
     linear_upper_confidence_bound = aggregate_agent(linear_upper_confidence_bound),
-    linear_thompson_sampling = aggregate_agent(linear_thompson_sampling)
+    linear_thompson_sampling = aggregate_agent(linear_thompson_sampling),
+    proto_linucb = proto_linucb()
   )
 
   r <- lapply(X, function(pol) {

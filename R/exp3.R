@@ -1,5 +1,4 @@
-#' @include make_policy.R
-NULL
+
 
 
 init_exp3 <- function(k, gamma = 0.05) {

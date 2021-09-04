@@ -71,7 +71,7 @@ compare_results <- function(results) {
     geom_step(aes(color=policy, group=1)) + facet_grid(policy ~ .) +
     theme(legend.position = "none") + theme(strip.text.y = element_text(angle = 0)) +
     scale_color_viridis_d() +
-    labs(y="arm") + theme_dark()
+    labs(y="arm")
 
   #ggpubr::ggarrange(regretplt, propplt, choiceplt, cir)
   gridExtra::grid.arrange(choiceplt,
