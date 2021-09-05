@@ -42,7 +42,6 @@ receive_ucb <- function(arm, reward) {
 #' @return double value
 #' @export
 #'
-#' @examples
 ucb <- function(mu, nu, alpha, t) {
   if (nu == 0) {
     Inf

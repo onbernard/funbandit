@@ -4,8 +4,7 @@ library(sloop)
 library(ggpubr)
 library(microbenchmark)
 library(ggplot2)
-
-
+# === ==== === ==== === ==== === ==== === ==== === ==== === ==== === ==== ===
 gen_rewardmat <- function(h, k, prob = runif(k)) {
   mat <- matrix(NA, ncol = k, nrow = h)
   for (a in 1:k) {
@@ -13,8 +12,8 @@ gen_rewardmat <- function(h, k, prob = runif(k)) {
   }
   mat
 }
-
-test_contextual <- function(h = 1000) {
+# === ==== === ==== === ==== === ==== === ==== === ==== === ==== === ==== ===
+test_contextual <- function(h = 100) {
   x1 <- runif(h, min = 0, max = 10)
   x2 <- runif(h, min = 0, max = 10)
   x3 <- runif(h, min = 0, max = 10)
@@ -30,10 +29,10 @@ test_contextual <- function(h = 1000) {
   reward_data <-  cbind(K1, K2, K3)
 
   X <- list(
-    # kernel_upper_confidence_bound = aggregate_agent(krr_upper_confidence_bound),
-    linear_upper_confidence_bound = aggregate_agent(linear_upper_confidence_bound),
-    linear_thompson_sampling = aggregate_agent(linear_thompson_sampling),
-    proto_linucb = proto_linucb()
+    proto_linucb = proto_linucb(),
+    proto_lints = proto_lints(),
+    proto_krr_ucb = proto_krr_ucb(),
+    proto_logit_ucb = proto_logit_ucb()
   )
 
   r <- lapply(X, function(pol) {
@@ -41,7 +40,7 @@ test_contextual <- function(h = 1000) {
   })
   compare_results(r)
 }
-
+# === ==== === ==== === ==== === ==== === ==== === ==== === ==== === ==== ===
 test_normal <- function(h = 200, k = 3) {
   reward_data <- gen_rewardmat(h, k)
   X <-

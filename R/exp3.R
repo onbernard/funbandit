@@ -53,7 +53,6 @@ receive_exp3 <- function(arm, reward) {
 #' @return
 #' @export
 #'
-#' @examples
 expp <- function(w, sum, k, gamma) {
   (1 - gamma) * (w / sum) + (gamma / k)
 }

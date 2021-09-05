@@ -36,6 +36,7 @@ make_aio_ctxt <- function(init, choose, receive, name, argnames) {
       stopifnot(k == ncol(rewardmat))
       stopifnot(dim == ncol(contextmat))
       h <- nrow(rewardmat)
+      # === === === === ===
       whatnext <- data.frame(this.choose(contextmat[1,]), stringsAsFactors = F)
       choice <- whatnext$which
       this.receive(choice, rewardmat[1, choice], contextmat[1,])
@@ -49,6 +50,7 @@ make_aio_ctxt <- function(init, choose, receive, name, argnames) {
       t <<- t + 1
       d <- myrow
       nCol <- ncol(d)
+      # === === === === ===
       if (h > 1) {
         d <- d[rep.int(1, h),]
         d <- as.list(d) # hack
