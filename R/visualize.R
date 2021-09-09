@@ -42,42 +42,61 @@ timings <- function(FUN, timeSeq) {
 }
 
 
+
 compare_results <- function(results) {
   df <- do.call(bind_rows, results)
-  #cbind(ww = rep(names(results), sapply(results, nrow)), do.call(bind_rows, results))
-  # labels = function(x) {str_wrap(x, width = 2) }
+  numColors <- length(results)
+  getColors <- scales::viridis_pal()
+  myPalette <- getColors(numColors)
+  names(myPalette) <- levels(df$policy)
   df$policy <- stringr::str_wrap(df$policy, width = 6)
+  # === === === === ===
+  propplt <-
+    ggplot(df, aes(policy, fill = factor(which))) +
+    # theme_light() +
+    ggthemes::theme_pander() +
+    geom_bar() +
+    #theme(axis.text.x = element_text(angle = -90, vjust = 0.5)) +
+    labs(fill="arm") +
+    scale_x_discrete(guide = guide_axis(angle = -35)) +
+    theme(axis.text.x = element_text(colour = myPalette))
+  # === === === === ===
+  choiceplt <-
+    ggplot(df, aes(x = t, y = factor(which))) +
+    geom_step(aes(color = policy, group = 1)) +
+    facet_grid(cols = vars(policy)) +
+    ggthemes::theme_pander() +
+    theme(strip.background.x = element_blank(), strip.text.x = element_blank(),
+          strip.background.y = element_blank(), strip.text.y = element_blank()) +
+    scale_color_viridis_d() +
+    labs(y = "arm") +
+    coord_flip()
+  # === === === === ===
   regretplt <-
     ggplot(data = df, aes(x = t, y = cum_regret, color = policy)) +
+    ggthemes::theme_pander() +
     scale_color_viridis_d() +
     geom_smooth(size = 1.6, se = F) + geom_point(size = 1.5)
-
-
-  cir <-
-    ggplot(df, aes(policy, fill = factor(which))) +
-    ggsci::scale_fill_jco() +
-    geom_bar() + theme(axis.text.x = element_text(angle = -90, vjust = 0.5)) +
-    labs(fill="arm")
-
-  propplt <-
+  # === === === === ===
+  histplt <-
     ggplot(df, aes(fill = policy)) +
     scale_fill_viridis_d() +
     geom_bar(aes(x=which, y=..prop..), position="dodge") +
     scale_y_continuous(labels = scales::percent) +
-    labs(x="arm")
-
-  choiceplt <-
-    ggplot(df, aes(x=t, y=factor(which))) +
-    geom_step(aes(color=policy, group=1)) + facet_grid(policy ~ .) +
-    theme(legend.position = "none") + theme(strip.text.y = element_text(angle = 0)) +
-    scale_color_viridis_d() +
-    labs(y="arm")
-
-  #ggpubr::ggarrange(regretplt, propplt, choiceplt, cir)
-  gridExtra::grid.arrange(choiceplt,
-               gridExtra::arrangeGrob(cir, propplt, ncol=2),
-               regretplt,
-               nrow=3)
+    labs(x="arm") +
+    ggthemes::theme_pander()
+  # === === === === ===
+  ggpubr::ggarrange(
+    propplt,
+    ggpubr::ggarrange(
+      choiceplt,
+      ggarrange(regretplt, histplt, nrow=2, legend = "none"),
+      common.legend = T,
+      legend = "bottom",
+      ncol=2
+    ),
+    ncol = 2,
+  widths = c(1,2))
 }
 
 # TODO : add arm mean to hist

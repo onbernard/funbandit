@@ -39,6 +39,7 @@ test_contextual <- function(h = 100) {
     pol(reward_data, context_data)
   })
   compare_results(r)
+  invisible(r)
 }
 # === ==== === ==== === ==== === ==== === ==== === ==== === ==== === ==== ===
 test_normal <- function(h = 200, k = 3) {
@@ -53,8 +54,10 @@ test_normal <- function(h = 200, k = 3) {
       other_ucb = upper_confidence_bound_policy(alpha=10)
     )
   r  <- lapply(X, function(pol) {
+
     pol(reward_data)
   })
 
-  compare_results(r)
+  print(compare_results(r))
+  invisible(do.call(bind_rows, r))
 }

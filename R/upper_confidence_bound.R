@@ -15,9 +15,6 @@ choose_ucb <- function() {
   indices <- mapply(ucb, Mu, Nu, MoreArgs = list(alpha, t))
   which <- which.max(indices)
   maxucb <- max(indices)
-  if (maxucb == Inf) {
-    maxucb <- NA
-  }
   list(which=which, maxucb=maxucb)
 }
 

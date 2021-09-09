@@ -32,9 +32,9 @@ make_aio <- function(init, choose, receive, name, argnames) {
     # === === === === ===
     all_in_one <- function(reward_data) {
       rewardmat <- prepare_reward_data(reward_data)
-      if (k==-1) {
+      if (k == -1) {
         k <<- ncol(rewardmat)
-        pol2env(this.init, c(list(k=k), PolArgs), e)
+        pol2env(this.init, c(list(k = k), PolArgs), e)
       }
       stopifnot(k == ncol(rewardmat))
       h <- nrow(rewardmat)
@@ -44,40 +44,31 @@ make_aio <- function(init, choose, receive, name, argnames) {
       regret <- max(rewardmat[1,]) - rewardmat[1, choice]
       cum_regret <<- cum_regret + regret
       myrow <-
-        cbind(whatnext,
-              reward = rewardmat[1, choice],
-              cum_regret = cum_regret,
-              t = t)
+        c(whatnext,
+          reward = rewardmat[1, choice],
+          regret = regret,
+          cum_regret = cum_regret)
       t <<- t + 1
-      d <- myrow
-      nCol <- ncol(d)
+      dt <- as.data.table(c(myrow, list(t = 1)))
       if (h > 1) {
-        d <- d[rep.int(1, h),]
-        d <- as.list(d) # hack
+        dt <- as.data.table(c(myrow, list(t = seq.int(1, h, 1))))
         for (i in seq.int(2, h, 1)) {
-          whatnext <- data.frame(this.choose(), stringsAsFactors = F)
+          whatnext <- this.choose()
           choice <- whatnext$which
           this.receive(choice, rewardmat[i, choice])
           regret <- max(rewardmat[i,]) - rewardmat[i, choice]
           cum_regret <<- cum_regret + regret
           myrow <-
-            cbind(
-              whatnext,
+            c(whatnext,
               reward = rewardmat[i, choice],
-              cum_regret = cum_regret,
-              t = t,
-              StringsAsFactors = F
-            )
+              regret = regret,
+              cum_regret = cum_regret)
           t <<- t + 1
-          for (j in seq_len(nCol)) {
-            d[[j]][i] <- myrow[[j]]
-          }
+          dt[i, names(myrow) := myrow]
         }
       }
-      df <- data.frame(d, stringsAsFactors = FALSE)
-      df$policy <- agent_name
-      df$policy <- factor(df$policy)
-      df
+      dt[,"policy" := .(factor(agent_name))][]
+      dt
     }
     # === === === === ===
     structure(
@@ -85,7 +76,9 @@ make_aio <- function(init, choose, receive, name, argnames) {
       policy_name = name,
       agent_name = agent_name,
       arguments = arguments,
-      class=c("aio", "agent")
+      class = c("aio", "agent")
     )
-  }, policy_name = name, class = c("aio", "policy"))
+  },
+  policy_name = name,
+  class = c("aio", "policy"))
 }
